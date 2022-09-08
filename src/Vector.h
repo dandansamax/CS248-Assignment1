@@ -79,7 +79,7 @@ public:
         return *this * (1 / length);
     }
 
-    ofColor getOfcolor() const
+    ofColor getOfColor() const
     {
         return ofColor(x * 255, y * 255, z * 255);
     }

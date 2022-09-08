@@ -18,10 +18,10 @@ void Scene::render(ofPixels &pixels)
     {
         for (int j = 0; j < ca.ny; j++)
         {
-
             auto [e, d] = ca.getViewRay(i, j);
             Vector3f color = getColor(e, d);
-            pixels.setColor(i, j, color.getOfcolor());
+            pixels.setColor(i, j, color.getOfColor());
+            // TODO
         }
     }
     return;
