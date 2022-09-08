@@ -31,6 +31,7 @@ Project{
         of.frameworks: []       // osx only, additional frameworks to link with the project
         of.staticLibraries: []  // static libraries
         of.dynamicLibraries: [] // dynamic libraries
+        of.cxxLanguageVersion: ["c++17"]
 
         // other flags can be set through the cpp module: http://doc.qt.io/qbs/cpp-module.html
         // eg: this will enable ccache when compiling

@@ -10,10 +10,10 @@ private:
     Vector3f u, v, w;
     bool perspective = false;
     float d = -1.0;
-    int nx, ny;
-    float width, height;
 
 public:
+    int nx, ny;
+    float width, height;
     Camera(Vector3f position, Vector3f viewDirection, float width, float height, int nx, int ny);
 
     void setPerspective(float d)

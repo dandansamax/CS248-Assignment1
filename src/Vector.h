@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <ofColor.h>
 class Vector3f
 {
 public:
@@ -76,5 +77,10 @@ public:
     {
         float length = std::sqrt(x * x + y * y + z * z);
         return *this * (1 / length);
+    }
+
+    ofColor getOfcolor() const
+    {
+        return ofColor(x * 255, y * 255, z * 255);
     }
 };

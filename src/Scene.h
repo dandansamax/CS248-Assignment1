@@ -8,8 +8,11 @@
 
 class Scene
 {
+private:
+    Vector3f getColor(Vector3f e, Vector3f d);
+
 public:
-    std::vector<GeoObject> Objects;
+    std::vector<GeoObject> objects;
     Camera ca;
 
     Scene(Camera ca) : ca(ca) {}
