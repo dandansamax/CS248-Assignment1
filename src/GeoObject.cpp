@@ -1,4 +1,5 @@
 #include <cmath>
+#include <utility>
 
 #include "GeoObject.h"
 
@@ -13,8 +14,8 @@ static bool solveSphere(Vector3f e, Vector3f d, Vector3f c, float r, float &t0, 
         return false;
     }
 
-    float t0 = (-B - std::sqrt(delta)) / A;
-    float t1 = (-B + std::sqrt(delta)) / A;
+    t0 = (-B - std::sqrt(delta)) / A;
+    t1 = (-B + std::sqrt(delta)) / A;
     if (t0 > t1)
     {
         std::swap(t0, t1);
