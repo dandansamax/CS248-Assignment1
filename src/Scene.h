@@ -2,20 +2,24 @@
 
 #include <vector>
 
-#include "GeoObject.h"
 #include "Camera.h"
+#include "GeoObject.h"
+#include "Shader.h"
 #include "ofMain.h"
 
 class Scene
 {
 private:
-    Vector3f getColor(Vector3f e, Vector3f d);
+    Vector3f getColorByED(Vector3f e, Vector3f d);
 
 public:
     std::vector<GeoObject> objects;
-    Camera ca;
+    std::vector<Light> lights;
+    Camera &ca;
+    ofPixels &pixels;
+    Shader &shader;
 
-    Scene(Camera ca) : ca(ca) {}
+    Scene(ofPixels &pixels, Camera &ca, Shader &shader) : ca(ca), pixels(pixels), shader(shader) {}
 
-    void render(ofPixels &color);
+    void render();
 };

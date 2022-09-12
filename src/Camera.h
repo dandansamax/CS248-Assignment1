@@ -21,10 +21,7 @@ public:
         perspective = true;
         this->d = d;
     }
-    void setParallel()
-    {
-        perspective = false;
-    }
+    void setParallel() { perspective = false; }
 
     std::pair<Vector3f, Vector3f> getViewRay(int i, int j);
 };

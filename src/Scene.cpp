@@ -1,25 +1,42 @@
 #include "Scene.h"
 
-Vector3f Scene::getColor(Vector3f e, Vector3f d)
+Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
 {
+    GeoObject *target = nullptr;
+    float t = HUGE_VAL_F32;
     for (GeoObject &obj : objects)
     {
         float t0, t1;
         Record rec;
-        obj.getIntersection(e, d, t0, t1, rec);
-        // TODO
+        bool intersected = obj.getIntersection(e, d, t0, t1, rec);
+        if (intersected)
+        {
+            float tmpT = (t0 > 0 ? t0 : t1);
+            if (tmpT < t)
+            {
+                t = tmpT;
+                target = &obj;
+            }
+        }
     }
-    return Vector3f(0,0,0);
+
+    // no intersection
+    if (!target)
+    {
+        return Vector3f();
+    }
+
+    return shader.getColor(lights, *target, e, d, t);
 }
 
-void Scene::render(ofPixels &pixels)
+void Scene::render()
 {
     for (int i = 0; i < ca.nx; i++)
     {
         for (int j = 0; j < ca.ny; j++)
         {
             auto [e, d] = ca.getViewRay(i, j);
-            Vector3f color = getColor(e, d);
+            Vector3f color = getColorByED(e, d);
             pixels.setColor(i, j, color.getOfColor());
             // TODO
         }
