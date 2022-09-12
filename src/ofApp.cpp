@@ -1,5 +1,7 @@
 #include "ofApp.h"
 #include "GeoObject.h"
+#include "Scene.h"
+#include "Shader.h"
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -16,6 +18,10 @@ void ofApp::setup()
             colorPixels.setColor(x, y, ofColor(x * 255 / w, y * 255 / w, 100));
         }
     }
+    Camera ca(Vector3f(0, 0, -1), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f);
+	// ca.setPerspective(1.0f);
+    NaiveShader nShader = NaiveShader();
+    Scene scene(colorPixels, ca, nShader);
 
     texColor.allocate(colorPixels);
 }

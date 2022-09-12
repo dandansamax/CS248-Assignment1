@@ -31,15 +31,13 @@ Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
 
 void Scene::render()
 {
-    for (int i = 0; i < ca.nx; i++)
+    for (int i = 0; i < ca.width; i++)
     {
-        for (int j = 0; j < ca.ny; j++)
+        for (int j = 0; j < ca.height; j++)
         {
             auto [e, d] = ca.getViewRay(i, j);
             Vector3f color = getColorByED(e, d);
             pixels.setColor(i, j, color.getOfColor());
-            // TODO
         }
     }
-    return;
 }

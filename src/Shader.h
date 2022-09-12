@@ -1,3 +1,5 @@
+#pragma once
+
 #include "GeoObject.h"
 #include "Light.h"
 
@@ -8,6 +10,16 @@ public:
                               float t) = 0;
 };
 
+class NaiveShader : public Shader
+{
+public:
+    NaiveShader() {}
+    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t)
+    {
+        return Vector3f(0, 0, 1);
+    }
+};
+
 class PhongShader : public Shader
 {
 private:
@@ -15,8 +27,7 @@ private:
 
 public:
     PhongShader(float ka, float kd, float ks) : ka(ka), kd(kd), ks(ks) {}
-    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d,
-                      float t);
+    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t);
 };
 
 class LambertianShader : public Shader
@@ -26,6 +37,5 @@ private:
 
 public:
     LambertianShader(float ka, float kd) : ka(ka), kd(kd) {}
-    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d,
-                      float t);
+    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t);
 };

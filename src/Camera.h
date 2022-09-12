@@ -9,17 +9,17 @@ private:
     Vector3f position;
     Vector3f u, v, w;
     bool perspective = false;
-    float d = -1.0;
+    float focal_length = -1.0;
 
 public:
-    int nx, ny;
-    float width, height;
-    Camera(Vector3f position, Vector3f viewDirection, float width, float height, int nx, int ny);
+    int width, height;
+    float r, t;
+    Camera(Vector3f position, Vector3f viewDirection, int width, int height, float r, float t);
 
-    void setPerspective(float d)
+    void setPerspective(float focal_length)
     {
         perspective = true;
-        this->d = d;
+        this->focal_length = focal_length;
     }
     void setParallel() { perspective = false; }
 
