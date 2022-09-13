@@ -21,7 +21,7 @@ Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
     }
 
     // no intersection
-    if (!target)
+    if (target == nullptr)
     {
         return Vector3f();
     }
@@ -35,7 +35,8 @@ void Scene::render()
     {
         for (int j = 0; j < ca.height; j++)
         {
-            auto [e, d] = ca.getViewRay(i, j);
+            Vector3f e, d;
+            std::tie(e, d) = ca.getViewRay(i, j);
             Vector3f color = getColorByED(e, d);
             pixels.setColor(i, j, color.getOfColor());
         }
