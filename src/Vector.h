@@ -52,10 +52,15 @@ public:
     }
     friend Vector3f operator*(const float &b, const Vector3f &vec) { return vec * b; }
 
-    Vector3f normalize() const
+    Vector3f normalize() const { return *this * (1 / this->norm()); }
+
+    float norm() const { return std::sqrt(x * x + y * y + z * z); }
+
+    friend std::ostream &operator<<(std::ostream &o, const Vector3f &v)
     {
-        float length = std::sqrt(x * x + y * y + z * z);
-        return *this * (1 / length);
+        o << v.x << " "
+          << " " << v.y << " " << v.z;
+        return o;
     }
 
     ofColor getOfColor() const { return ofColor(x * 255, y * 255, z * 255); }

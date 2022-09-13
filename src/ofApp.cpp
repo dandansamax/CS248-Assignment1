@@ -10,24 +10,23 @@ void ofApp::setup()
     h = 480;
     colorPixels.allocate(w, h, OF_PIXELS_RGB);
 
-    // color pixels, use x and y to control red and green
-    for (int y = 0; y < h; y++)
-    {
-        for (int x = 0; x < w; x++)
-        {
-            colorPixels.setColor(x, y, ofColor(x * 255 / w, y * 255 / w, 100));
-        }
-    }
-    Camera ca(Vector3f(0, 0, -1), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f);
-	// ca.setPerspective(1.0f);
-    NaiveShader nShader = NaiveShader();
-    Scene scene(colorPixels, ca, nShader);
+    scene.ca = std::move(std::make_unique<Camera>(Vector3f(0, 0, -1), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f));
+    scene.pixels = &colorPixels;
+    scene.shader = std::move(std::make_unique<NaiveShader>());
 
-    texColor.allocate(colorPixels);
+    scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
+    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(0, 0, 0), 0.5, Vector3f(0, 0, 1)));
+    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(0, 0, 2), 1, Vector3f(0, 1, 0)));
+
+    update();
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {}
+void ofApp::update()
+{
+    scene.render();
+    texColor.allocate(colorPixels);
+}
 
 //--------------------------------------------------------------
 void ofApp::draw()
@@ -37,7 +36,20 @@ void ofApp::draw()
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {}
+void ofApp::keyPressed(int key)
+{
+    if (key == 'p')
+    {
+        if (scene.ca->perspective)
+        {
+            scene.ca->setParallel();
+        }
+        else
+        {
+            scene.ca->setPerspective(1.0f);
+        }
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {}

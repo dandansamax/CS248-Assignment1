@@ -5,9 +5,9 @@ Camera::Camera(Vector3f position, Vector3f viewDirection, int width, int height,
 {
     this->position = position;
 
-    w = -viewDirection / viewDirection.normalize();
+    w = -viewDirection.normalize();
     Vector3f up(0, 1, 0);
-    u = (up.cross(w)) / (up.cross(w).normalize());
+    u = up.cross(w).normalize();
     v = w.cross(u);
 }
 

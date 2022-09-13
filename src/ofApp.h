@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Scene.h"
 #include "ofMain.h"
 
 class ofApp : public ofBaseApp
@@ -27,4 +28,6 @@ public:
     int w, h;
 
     ofPixels colorPixels;
+
+    Scene scene;
 };

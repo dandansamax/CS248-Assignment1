@@ -6,17 +6,19 @@
 class Shader
 {
 public:
-    virtual Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d,
-                              float t) = 0;
+    virtual Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
+                              const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t) = 0;
 };
 
 class NaiveShader : public Shader
 {
 public:
     NaiveShader() {}
-    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t)
+    Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights, const std::shared_ptr<GeoObject> target,
+                      Vector3f e, Vector3f d, float t)
     {
-        return Vector3f(0, 0, 1);
+        // std::cout<<target
+        return target->color;
     }
 };
 
@@ -27,7 +29,8 @@ private:
 
 public:
     PhongShader(float ka, float kd, float ks) : ka(ka), kd(kd), ks(ks) {}
-    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t);
+    Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights, const std::shared_ptr<GeoObject> target,
+                      Vector3f e, Vector3f d, float t);
 };
 
 class LambertianShader : public Shader
@@ -37,5 +40,6 @@ private:
 
 public:
     LambertianShader(float ka, float kd) : ka(ka), kd(kd) {}
-    Vector3f getColor(const std::vector<Light> &lights, const GeoObject &target, Vector3f e, Vector3f d, float t);
+    Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights, const std::shared_ptr<GeoObject> target,
+                      Vector3f e, Vector3f d, float t);
 };

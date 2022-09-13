@@ -13,13 +13,12 @@ private:
     Vector3f getColorByED(Vector3f e, Vector3f d);
 
 public:
-    std::vector<GeoObject> objects;
-    std::vector<Light> lights;
-    Camera &ca;
-    ofPixels &pixels;
-    Shader &shader;
+    ofPixels *pixels;
 
-    Scene(ofPixels &pixels, Camera &ca, Shader &shader) : ca(ca), pixels(pixels), shader(shader) {}
+    std::vector<std::shared_ptr<GeoObject>> objects;
+    std::vector<std::shared_ptr<Light>> lights;
+    std::unique_ptr<Camera> ca;
+    std::unique_ptr<Shader> shader;
 
     void render();
 };
