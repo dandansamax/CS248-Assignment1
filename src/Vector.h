@@ -51,10 +51,12 @@ public:
         return *this;
     }
     friend Vector3f operator*(const float &b, const Vector3f &vec) { return vec * b; }
+    friend Vector3f operator/(const float &b, const Vector3f &vec) { return Vector3f(b / vec.x, b / vec.y, b / vec.z); }
 
     Vector3f normalize() const { return *this * (1 / this->norm()); }
-
+    Vector3f truncate() const { return Vector3f(std::min(1.0f, x), std::min(1.0f, y), std::min(1.0f, z)); }
     float norm() const { return std::sqrt(x * x + y * y + z * z); }
+    float sum() const { return x + y + z; }
 
     friend std::ostream &operator<<(std::ostream &o, const Vector3f &v)
     {

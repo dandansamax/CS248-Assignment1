@@ -8,7 +8,7 @@ class Camera
 private:
     Vector3f position;
     Vector3f u, v, w;
-    float focal_length = -1.0;
+    float focal_length = 1.0f;
 
 public:
     bool perspective = false;
@@ -20,8 +20,13 @@ public:
     {
         perspective = true;
         this->focal_length = focal_length;
+        position += focal_length * w;
     }
-    void setParallel() { perspective = false; }
+    void setParallel()
+    {
+        perspective = false;
+        position -= focal_length * w;
+    }
 
     std::pair<Vector3f, Vector3f> getViewRay(int i, int j);
 };

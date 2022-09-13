@@ -2,7 +2,6 @@
 
 Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
 {
-    // std::cout << e << " | " << d << std::endl;
     std::shared_ptr<GeoObject> target = nullptr;
     float t = HUGE_VAL_F32;
     for (auto &obj : objects)

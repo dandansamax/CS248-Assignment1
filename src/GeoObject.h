@@ -35,17 +35,17 @@ public:
 class Elipsoid : public GeoObject
 {
 private:
-    float a, b, c;
+    Vector3f abc, uvw;
     Vector3f normal_factor;
 
 public:
-    // x^2/a^2 + y^2/b^2 + z^2/c^2 - 1 = 0
-    Elipsoid(float a, float b, float c, Vector3f color)
-        : GeoObject(color), a(a), b(b), c(c), normal_factor(Vector3f(2 / a * a, 2 / b * b, 2 / c * c))
+    // (x-u)^2/a^2 + (y-v)^2/b^2 + (z-w)^2/c^2 - 1 = 0
+    Elipsoid(Vector3f abc, Vector3f uvw, Vector3f color)
+        : GeoObject(color), abc(abc), uvw(uvw), normal_factor(2 / (abc * abc))
     {
     }
     bool getIntersection(Vector3f e, Vector3f d, float &t0, float &t1, Record &rec);
-    Vector3f getNormal(Vector3f point) { return Vector3f(point * normal_factor).normalize(); }
+    Vector3f getNormal(Vector3f point) { return Vector3f((point - uvw) * normal_factor).normalize(); }
 };
 
 class Plane : public GeoObject

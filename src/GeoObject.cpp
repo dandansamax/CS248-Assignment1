@@ -3,22 +3,27 @@
 
 #include "GeoObject.h"
 
-static bool solveSphere(Vector3f e, Vector3f d, Vector3f c, float r, float &t0, float &t1)
+static bool solveQuadratic(float a, float b, float c, float &ans0, float &ans1)
 {
-    float A = d.dot(d);
-    float B = 2 * d.dot(e - c);
-    float C = (e - c).dot(e - c) - r * r;
-    float delta = B * B - 4 * A * C;
+    float delta = b * b - 4 * a * c;
     if (delta <= 0)
     {
         return false;
     }
 
-    t0 = (-B - std::sqrt(delta)) / A;
-    t1 = (-B + std::sqrt(delta)) / A;
-    if (t0 > t1)
+    ans0 = (-b - std::sqrt(delta)) / (2 * a);
+    ans1 = (-b + std::sqrt(delta)) / (2 * a);
+    return true;
+}
+
+bool Sphere::getIntersection(Vector3f e, Vector3f d, float &t0, float &t1, Record &rec)
+{
+    float A = d.dot(d);
+    float B = 2 * d.dot(e - c);
+    float C = (e - c).dot(e - c) - r * r;
+    if (!solveQuadratic(A, B, C, t0, t1))
     {
-        std::swap(t0, t1);
+        return false;
     }
     if (t1 > 0)
     {
@@ -30,17 +35,23 @@ static bool solveSphere(Vector3f e, Vector3f d, Vector3f c, float r, float &t0, 
     }
 }
 
-bool Sphere::getIntersection(Vector3f e, Vector3f d, float &t0, float &t1, Record &rec)
-{
-    return solveSphere(e, d, c, r, t0, t1);
-}
-
 bool Elipsoid::getIntersection(Vector3f e, Vector3f d, float &t0, float &t1, Record &rec)
 {
-    Vector3f scaleDown(1 / a, 1 / b, 1 / c);
-    Vector3f et = e * scaleDown;
-    Vector3f dt = d * scaleDown;
-    return solveSphere(et, dt, Vector3f(0, 0, 0), 1, t0, t1);
+    float A = ((d * d) / (abc * abc)).sum();
+    float B = ((2 * (e - uvw) * d) / (abc * abc)).sum();
+    float C = (((e - uvw) * (e - uvw)) / (abc * abc)).sum() - 1;
+    if (!solveQuadratic(A, B, C, t0, t1))
+    {
+        return false;
+    }
+    if (t1 > 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool Plane::getIntersection(Vector3f e, Vector3f d, float &t0, float &t1, Record &rec)

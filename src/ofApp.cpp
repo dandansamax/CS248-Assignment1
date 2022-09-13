@@ -10,13 +10,16 @@ void ofApp::setup()
     h = 480;
     colorPixels.allocate(w, h, OF_PIXELS_RGB);
 
-    scene.ca = std::move(std::make_unique<Camera>(Vector3f(0, 0, -1), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f));
+    scene.ca = std::move(std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f));
     scene.pixels = &colorPixels;
-    scene.shader = std::move(std::make_unique<NaiveShader>());
+    scene.shader = std::move(std::make_unique<LambertianShader>());
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
-    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(0, 0, 0), 0.5, Vector3f(0, 0, 1)));
-    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(0, 0, 2), 1, Vector3f(0, 1, 0)));
+    // scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(1, 1, 1)));
+    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0)));
+    scene.objects.push_back(std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(0, -0.5, 2), Vector3f(0, 1, 0)));
+    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(0.4, 0.4, -0.5), 0.2, Vector3f(0, 0, 1)));
+    scene.objects.push_back(std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5)));
 
     update();
 }
@@ -38,8 +41,9 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    if (key == 'p')
+    switch (key)
     {
+    case 'p':
         if (scene.ca->perspective)
         {
             scene.ca->setParallel();
@@ -48,6 +52,13 @@ void ofApp::keyPressed(int key)
         {
             scene.ca->setPerspective(1.0f);
         }
+        break;
+    case 'a':
+        scene.shader = std::move(std::make_unique<LambertianShader>());
+        break;
+    case 'b':
+        scene.shader = std::move(std::make_unique<PhongShader>());
+        break;
     }
 }
 
