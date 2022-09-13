@@ -29,4 +29,5 @@ public:
     }
 
     std::pair<Vector3f, Vector3f> getViewRay(int i, int j);
+    void movePosition(Vector3f duration);
 };

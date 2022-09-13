@@ -29,3 +29,5 @@ std::pair<Vector3f, Vector3f> Camera::getViewRay(int i, int j)
     }
     return std::make_pair(e, d);
 }
+
+void Camera::movePosition(Vector3f duration) { position += duration; }

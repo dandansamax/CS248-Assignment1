@@ -35,7 +35,7 @@ void ofApp::update()
     auto stop = high_resolution_clock::now();
     texColor.allocate(colorPixels);
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Takes " << duration.count()/1000.0 << "ms to render" << endl;
+    cout << "Takes " << duration.count() / 1000.0 << "ms to render" << endl;
 }
 
 //--------------------------------------------------------------
@@ -60,11 +60,29 @@ void ofApp::keyPressed(int key)
             scene.ca->setPerspective(1.0f);
         }
         break;
-    case 'a':
+    case 'q':
         scene.shader = std::move(std::make_unique<LambertianShader>());
         break;
-    case 'b':
+    case 'e':
         scene.shader = std::move(std::make_unique<PhongShader>());
+        break;
+    case 'w':
+        scene.ca->movePosition(Vector3f(0, 0, 0.1f));
+        break;
+    case 's':
+        scene.ca->movePosition(Vector3f(0, 0, -0.1f));
+        break;
+    case 'a':
+        scene.ca->movePosition(Vector3f(-0.1f, 0, 0));
+        break;
+    case 'd':
+        scene.ca->movePosition(Vector3f(0.1f, 0, 0));
+        break;
+    case 32:
+        scene.ca->movePosition(Vector3f(0, 0.1f, 0));
+        break;
+    case 'x':
+        scene.ca->movePosition(Vector3f(0, -0.1f, 0));
         break;
     }
 }
