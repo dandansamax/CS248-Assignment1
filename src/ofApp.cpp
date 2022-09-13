@@ -1,7 +1,11 @@
-#include "ofApp.h"
+#include <chrono>
+
 #include "GeoObject.h"
 #include "Scene.h"
 #include "Shader.h"
+#include "ofApp.h"
+
+using namespace std::chrono;
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -17,18 +21,21 @@ void ofApp::setup()
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0, 0)));
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0)));
-    scene.objects.push_back(std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0)));
+    scene.objects.push_back(
+        std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0)));
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
     scene.objects.push_back(std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5)));
-
-    update();
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
+    auto start = high_resolution_clock::now();
     scene.render();
+    auto stop = high_resolution_clock::now();
     texColor.allocate(colorPixels);
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Takes " << duration.count()/1000.0 << "ms to render" << endl;
 }
 
 //--------------------------------------------------------------
