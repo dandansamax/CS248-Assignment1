@@ -19,7 +19,7 @@ void ofApp::setup()
     scene.shader = std::move(std::make_unique<LambertianShader>());
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
-    scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0, 0)));
+    scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0)));
     scene.objects.push_back(
         std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0)));

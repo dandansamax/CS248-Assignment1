@@ -26,7 +26,7 @@ Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
         return Vector3f();
     }
 
-    return shader->getColor(lights, target, e, d, t);
+    return shader->getColor(lights, objects, target, e, d, t);
 }
 
 void Scene::render()

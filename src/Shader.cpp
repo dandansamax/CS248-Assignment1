@@ -1,6 +1,25 @@
 #include "Shader.h"
 
+const float eps = 0.001f;
+
+static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objects, std::shared_ptr<Light> light,
+                            Vector3f point)
+{
+    Vector3f shadowRay = (light->position - point).normalize();
+    for (auto &obj : objects)
+    {
+        float t0, t1;
+        Record rec;
+        if (obj->getIntersection(point + eps * shadowRay, shadowRay, t0, t1, rec))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
+                                    const std::vector<std::shared_ptr<GeoObject>> &objects,
                                     const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t)
 {
     Vector3f p = e + t * d;
@@ -9,6 +28,10 @@ Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &l
 
     for (auto light : lights)
     {
+        if (inShadow(objects, light, p))
+        {
+            continue;
+        }
         Vector3f l = (light->position - p).normalize();
         rnt += kd * target->color * light->color * std::max(0.0f, normal.dot(l));
     }
@@ -18,6 +41,7 @@ Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &l
 }
 
 Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
+                               const std::vector<std::shared_ptr<GeoObject>> &objects,
                                const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t)
 {
     Vector3f p = e + t * d;
@@ -27,6 +51,10 @@ Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights
 
     for (auto light : lights)
     {
+        if (inShadow(objects, light, p))
+        {
+            continue;
+        }
         Vector3f l = (light->position - p).normalize();
         Vector3f h = (v + l).normalize();
         rnt += kd * target->color * light->color * std::max(0.0f, normal.dot(l));
