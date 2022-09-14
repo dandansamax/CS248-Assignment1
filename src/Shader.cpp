@@ -8,9 +8,8 @@ static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objec
     Vector3f shadowRay = (light->position - point).normalize();
     for (auto &obj : objects)
     {
-        float t0, t1;
-        Record rec;
-        if (obj->getIntersection(point + eps * shadowRay, shadowRay, t0, t1, rec))
+
+        if (obj->getIntersection(point + eps * shadowRay, shadowRay, nullptr))
         {
             return true;
         }
@@ -19,12 +18,13 @@ static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objec
 }
 
 Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                                    const std::vector<std::shared_ptr<GeoObject>> &objects,
-                                    const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t)
+                                    const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d,
+                                    TRecord record)
 {
-    Vector3f p = e + t * d;
+    Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();
-    Vector3f normal = target->getNormal(p);
+    Vector3f normal = record.normal;
+    Vector3f color = record.target->color;
 
     for (auto light : lights)
     {
@@ -33,20 +33,21 @@ Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &l
             continue;
         }
         Vector3f l = (light->position - p).normalize();
-        rnt += kd * target->color * light->color * std::max(0.0f, normal.dot(l));
+        rnt += kd * color * light->color * std::max(0.0f, normal.dot(l));
     }
-    rnt += ka * ia * target->color;
+    rnt += ka * ia * color;
 
     return rnt.truncate();
 }
 
 Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                               const std::vector<std::shared_ptr<GeoObject>> &objects,
-                               const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t)
+                               const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d,
+                               TRecord record)
 {
-    Vector3f p = e + t * d;
+    Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();
-    Vector3f normal = target->getNormal(p);
+    Vector3f normal = record.normal;
+    Vector3f color = record.target->color;
     Vector3f v = -d.normalize();
 
     for (auto light : lights)
@@ -57,10 +58,10 @@ Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights
         }
         Vector3f l = (light->position - p).normalize();
         Vector3f h = (v + l).normalize();
-        rnt += kd * target->color * light->color * std::max(0.0f, normal.dot(l));
-        rnt += ks * target->color * light->color * std::pow(std::max(0.0f, normal.dot(h)), phong_exponent);
+        rnt += kd * color * light->color * std::max(0.0f, normal.dot(l));
+        rnt += ks * color * light->color * std::pow(std::max(0.0f, normal.dot(h)), phong_exponent);
     }
-    rnt += ka * ia * target->color;
+    rnt += ka * ia * color;
 
     return rnt.truncate();
 }

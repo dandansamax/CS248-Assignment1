@@ -2,31 +2,18 @@
 
 Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
 {
-    std::shared_ptr<GeoObject> target = nullptr;
-    float t = HUGE_VAL_F32;
-    for (auto &obj : objects)
+    std::shared_ptr<TQueue> q = make_shared<TQueue>();
+    for (auto obj : objects)
     {
-        float t0, t1;
-        Record rec;
-        bool intersected = obj->getIntersection(e, d, t0, t1, rec);
-        if (intersected)
-        {
-            float tmpT = (t0 > 0 ? t0 : t1);
-            if (tmpT < t)
-            {
-                t = tmpT;
-                target = obj;
-            }
-        }
+        bool intersected = obj->getIntersection(e, d, q);
     }
 
     // no intersection
-    if (target == nullptr)
-    {
+    if (q->empty()){
         return Vector3f();
     }
 
-    return shader->getColor(lights, objects, target, e, d, t);
+    return shader->getColor(lights, objects, e, d, q->top());
 }
 
 void Scene::render()

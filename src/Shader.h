@@ -7,8 +7,8 @@ class Shader
 {
 public:
     virtual Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                              const std::vector<std::shared_ptr<GeoObject>> &objects,
-                              const std::shared_ptr<GeoObject> target, Vector3f e, Vector3f d, float t) = 0;
+                              const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d,
+                              TRecord record) = 0;
 };
 
 class NaiveShader : public Shader
@@ -16,11 +16,10 @@ class NaiveShader : public Shader
 public:
     NaiveShader() {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const std::shared_ptr<GeoObject> target,
-                      Vector3f e, Vector3f d, float t)
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d, TRecord record)
     {
-        // std::cout<<target
-        return target->color;
+        // std::cout<<record
+        return record.target->color;
     }
 };
 
@@ -35,8 +34,7 @@ public:
     PhongShader() {}
     PhongShader(float ka, float kd, float ks) : ka(ka), kd(kd), ks(ks) {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const std::shared_ptr<GeoObject> target,
-                      Vector3f e, Vector3f d, float t);
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d, TRecord record);
 };
 
 class LambertianShader : public Shader
@@ -49,6 +47,5 @@ public:
     LambertianShader() {}
     LambertianShader(float ka, float kd) : ka(ka), kd(kd) {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const std::shared_ptr<GeoObject> target,
-                      Vector3f e, Vector3f d, float t);
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d, TRecord record);
 };
