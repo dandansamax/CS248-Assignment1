@@ -5,15 +5,18 @@ Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
     std::shared_ptr<TQueue> q = make_shared<TQueue>();
     for (auto obj : objects)
     {
-        bool intersected = obj->getIntersection(e, d, q);
+        obj->getIntersection(e, d, q);
     }
 
     // no intersection
-    if (q->empty()){
+    if (q->empty())
+    {
         return Vector3f();
     }
 
-    return shader->getColor(lights, objects, e, d, q->top());
+    std::sort(q->begin(), q->end());
+
+    return shader->getColor(lights, objects, e, d, q->back());
 }
 
 void Scene::render()

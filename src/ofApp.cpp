@@ -17,6 +17,7 @@ void ofApp::setup()
     scene.ca = std::move(std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f));
     scene.pixels = &colorPixels;
     scene.shader = std::move(std::make_unique<LambertianShader>());
+    // scene.shader = std::move(std::make_unique<NormShader>());
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
@@ -24,6 +25,8 @@ void ofApp::setup()
     scene.objects.push_back(
         std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0)));
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
+    scene.objects.push_back(
+        std::make_shared<Cylinder>(Vector3f(0, 0, 2), Vector3f(0.5, 1, -0.2), 0.5, 1, -1, Vector3f(1, 1, 0)));
     scene.objects.push_back(std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5)));
 }
 

@@ -9,6 +9,8 @@ public:
     Vector3f() : x(0), y(0), z(0) {}
     Vector3f(float x, float y, float z) : x(x), y(y), z(z) {}
 
+    bool operator==(const Vector3f &b) { return x == b.x && y == b.y && z == b.z; }
+
     Vector3f operator-() { return Vector3f(-x, -y, -z); }
 
     Vector3f operator+(const Vector3f &b) const { return Vector3f(x + b.x, y + b.y, z + b.z); }

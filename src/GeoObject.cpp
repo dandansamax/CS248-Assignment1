@@ -63,13 +63,13 @@ bool Elipsoid::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q
 bool Plane::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
 {
 
-    float t = abc.dot(d);
-    if (t == 0.0f)
+    float tmp = abc.dot(d);
+    if (tmp == 0.0f)
     {
         return false;
     }
 
-    float t = -(abc.dot(e) + cons) / t;
+    float t = -(abc.dot(e) + cons) / tmp;
     if (t > 0)
     {
         Vector3f point = e + d * t;
@@ -91,11 +91,12 @@ bool Circle::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) 
     {
         return false;
     }
-    float t = tmp_q->at(0).t;
-    Vector3f l = e + d * t - c;
+    auto &rec = tmp_q->at(0);
+    Vector3f l = e + d * rec.t - c;
     if (l.dot(l) < r * r)
     {
-        q->push_back(tmp_q->at(0));
+        rec.target = (GeoObject *)this;
+        q->push_back(rec);
         return true;
     }
     else
@@ -104,19 +105,18 @@ bool Circle::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) 
     }
 }
 
-static inline bool between2plane(Vector3f point, const Plane &plane1, const Plane &plane2)
-{
-    return plane1.side(point) != plane2.side(point);
-}
-
 bool Cylinder::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
 {
     auto tmp_q = std::make_shared<TQueue>();
     bool rnt1 = c1.getIntersection(e, d, tmp_q);
     bool rnt2 = c2.getIntersection(e, d, tmp_q);
+    for (auto &rec : *tmp_q)
+    {
+        rec.target = (GeoObject *)this;
+        q->push_back(rec);
+    }
     if (rnt1 && rnt2)
     {
-        q->insert(q->end(), tmp_q->begin(), tmp_q->end());
         return true;
     }
     float dv = d.dot(direct);
@@ -126,15 +126,23 @@ bool Cylinder::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q
     float B = 2 * dv * eav - 2 * d.dot(ea);
     float C = eav * eav - ea.dot(ea) + r * r;
 
-    float tmp0, tmp1;
-    if (!solveQuadratic(A, B, C, tmp0, tmp1))
+    bool flag = false;
+    float t0, t1;
+    if (!solveQuadratic(A, B, C, t0, t1))
     {
         return false;
     }
-    Vector3f p0 = e + tmp0 * d;
-    Vector3f p1 = e + tmp1 * d;
-    if (between2plane(p0, c1, c2))
+    Vector3f p0 = e + t0 * d;
+    Vector3f p1 = e + t1 * d;
+    if (t0 > 0 && between2plane(p0))
     {
-        // TODO
+        q->push_back(TRecord(t0, p0, getNormal(e, p0), (GeoObject *)this));
+        flag = true;
     }
+    if (t1 > 0 && between2plane(p1))
+    {
+        q->push_back(TRecord(t1, p1, getNormal(e, p1), (GeoObject *)this));
+        flag = true;
+    }
+    return flag;
 }

@@ -4,6 +4,8 @@
 
 #include <queue>
 
+class GeoObject;
+
 struct TRecord
 {
     TRecord(float t, Vector3f inter_point, Vector3f normal, GeoObject *target)
@@ -20,7 +22,6 @@ struct TRecord
 };
 
 using TQueue = std::vector<TRecord>;
-
 class GeoObject
 {
 public:
@@ -59,16 +60,17 @@ public:
     {
     }
     bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const { return Vector3f((point - uvw) * normal_factor).normalize(); }
+    Vector3f getNormal(Vector3f view, Vector3f point) const
+    {
+        return Vector3f((point - uvw) * normal_factor).normalize();
+    }
 };
 
 class Plane : public GeoObject
 {
-private:
+public:
     Vector3f abc;
     float cons;
-
-public:
     // ax + by + cz + cons = 0
     Plane(float a, float b, float c, float cons, Vector3f color) : GeoObject(color), abc(Vector3f(a, b, c)), cons(cons)
     {
@@ -76,9 +78,17 @@ public:
     Plane(Vector3f p, Vector3f norm, Vector3f color) : GeoObject(color), abc(norm), cons(-p.dot(norm)) {}
 
     bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const { return abc.normalize(); }
+    Vector3f getNormal(Vector3f view, Vector3f point) const
+    {
+        // Vector3f n = abc.normalize();
+        // Vector3f np = Vector3f(-cons / abc.x, 0, 0) + n;
+        // bool b1 = side(np);
+        // bool b2 = side(view);
+        // return b1 == b2 ? n : -n;
+        return abc.normalize();
+    }
 
-    bool side(Vector3f point) const { return abc.dot(point) + cons > 0; }
+    bool side(const Vector3f &point) const { return abc.dot(point) + cons > 0; }
 };
 
 class Circle : public Plane
@@ -88,7 +98,7 @@ private:
     float r;
 
 public:
-    Circle(Vector3f center, float r, Vector3f norm, Vector3f color) : Plane(center, norm, color), r(r), c(c) {}
+    Circle(Vector3f center, float r, Vector3f norm, Vector3f color) : Plane(center, norm, color), c(center), r(r) {}
     bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
 };
 
@@ -99,12 +109,22 @@ private:
     Vector3f center, direct;
     float r;
 
+    bool between2plane(const Vector3f &point) const { return !c1.side(point) && !c2.side(point); }
+
 public:
-    Cylinder(Vector3f center, Vector3f direct, float r, Vector3f bound1, Vector3f bound2, Vector3f color)
-        : GeoObject(color), center(center.normalize()), direct(direct.normalize()), r(r),
-          c1(Circle(bound1, r, (bound1 - bound2).normalize(), color)),
-          c2(Circle(bound2, r, (bound2 - bound1).normalize(), color))
+    // up_bound must be bigger than low_bound
+    Cylinder(Vector3f center, Vector3f direct, float r, float up_bound, float low_bound, Vector3f color)
+        : GeoObject(color), c1(Circle(center + direct * up_bound, r, direct.normalize(), color)),
+          c2(Circle(center + direct * low_bound, r, -direct.normalize(), color)), center(center),
+          direct(direct.normalize()), r(r)
+
     {
     }
     bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
+    Vector3f getNormal(Vector3f view, Vector3f point) const
+    {
+        Vector3f v = point - center;
+        Vector3f n = (point - (center + (direct * v.dot(direct)))).normalize();
+        return n;
+    }
 };

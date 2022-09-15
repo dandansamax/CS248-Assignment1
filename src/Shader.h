@@ -18,8 +18,18 @@ public:
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
                       const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d, TRecord record)
     {
-        // std::cout<<record
         return record.target->color;
+    }
+};
+
+class NormShader : public Shader
+{
+public:
+    NormShader() {}
+    Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d, TRecord record)
+    {
+        return (record.normal + Vector3f(1, 1, 1)) * 0.5;
     }
 };
 
