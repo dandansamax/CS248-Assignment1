@@ -5,7 +5,7 @@
 const float eps = 0.001f;
 
 static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objects, std::shared_ptr<Light> light,
-                            Vector3f point)
+                            const Vector3f &point)
 {
     auto tmp_q = std::make_shared<TQueue>();
     Vector3f shadowRay = (light->position - point).normalize();
@@ -20,8 +20,8 @@ static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objec
 }
 
 Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                                    const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d,
-                                    TRecord record)
+                                    const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
+                                    const TRecord &record)
 {
     Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();
@@ -43,8 +43,8 @@ Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &l
 }
 
 Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                               const std::vector<std::shared_ptr<GeoObject>> &objects, Vector3f e, Vector3f d,
-                               TRecord record)
+                               const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
+                               const TRecord &record)
 {
     Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();

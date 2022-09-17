@@ -16,7 +16,7 @@ static inline bool solveQuadratic(float a, float b, float c, float &ans0, float 
     return true;
 }
 
-bool Sphere::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
+bool Sphere::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
 {
     float A = d.dot(d);
     float B = 2 * d.dot(e - c);
@@ -38,7 +38,7 @@ bool Sphere::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) 
     return flag;
 }
 
-bool Elipsoid::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
+bool Elipsoid::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
 {
     float A = ((d * d) / (abc * abc)).sum();
     float B = ((2 * (e - uvw) * d) / (abc * abc)).sum();
@@ -60,7 +60,7 @@ bool Elipsoid::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q
     return flag;
 }
 
-bool Plane::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
+bool Plane::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
 {
 
     float tmp = abc.dot(d);
@@ -82,7 +82,7 @@ bool Plane::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) c
     }
 }
 
-bool Circle::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
+bool Circle::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
 {
 
     auto tmp_q = std::make_shared<TQueue>();
@@ -105,7 +105,7 @@ bool Circle::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) 
     }
 }
 
-bool Cylinder::getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const
+bool Cylinder::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
 {
     auto tmp_q = std::make_shared<TQueue>();
     bool rnt1 = c1.getIntersection(e, d, tmp_q);

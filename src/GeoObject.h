@@ -30,8 +30,8 @@ public:
     // virtual ~GeoObject() {}
 
     // make sure that t0 is less than t1
-    virtual bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const = 0;
-    virtual Vector3f getNormal(Vector3f view, Vector3f point) const = 0;
+    virtual bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const = 0;
+    virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
 };
 
 class Sphere : public GeoObject
@@ -43,8 +43,8 @@ private:
 public:
     // (p-c)^2 - r^2 = 0
     Sphere(Vector3f c, float r, Vector3f color) : GeoObject(color), c(c), r(r) {}
-    bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const { return Vector3f(point - c).normalize(); }
+    bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const;
+    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const { return Vector3f(point - c).normalize(); }
 };
 
 class Elipsoid : public GeoObject
@@ -59,8 +59,8 @@ public:
         : GeoObject(color), abc(abc), uvw(uvw), normal_factor(2 / (abc * abc))
     {
     }
-    bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const
+    bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const;
+    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const
     {
         return Vector3f((point - uvw) * normal_factor).normalize();
     }
@@ -77,8 +77,8 @@ public:
     }
     Plane(Vector3f p, Vector3f norm, Vector3f color) : GeoObject(color), abc(norm), cons(-p.dot(norm)) {}
 
-    bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const
+    bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const;
+    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const
     {
         // Vector3f n = abc.normalize();
         // Vector3f np = Vector3f(-cons / abc.x, 0, 0) + n;
@@ -99,7 +99,7 @@ private:
 
 public:
     Circle(Vector3f center, float r, Vector3f norm, Vector3f color) : Plane(center, norm, color), c(center), r(r) {}
-    bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
+    bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const;
 };
 
 class Cylinder : public GeoObject
@@ -120,8 +120,8 @@ public:
 
     {
     }
-    bool getIntersection(Vector3f e, Vector3f d, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(Vector3f view, Vector3f point) const
+    bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const;
+    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const
     {
         Vector3f v = point - center;
         Vector3f n = (point - (center + (direct * v.dot(direct)))).normalize();
