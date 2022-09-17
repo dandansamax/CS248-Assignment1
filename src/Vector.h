@@ -45,6 +45,7 @@ public:
     float dot(const Vector3f &b) const { return x * b.x + y * b.y + z * b.z; }
 
     Vector3f operator*(const float &b) const { return Vector3f(x * b, y * b, z * b); }
+    Vector3f operator/(const float &b) const { return Vector3f(x / b, y / b, z / b); }
     Vector3f &operator*=(const float &b)
     {
         x = x * b;

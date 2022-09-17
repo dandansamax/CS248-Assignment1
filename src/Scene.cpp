@@ -40,7 +40,8 @@ void Scene::render()
             Vector3f e, d;
             std::tie(e, d) = ca->getViewRay(i, j);
             Vector3f color = getColorByED(e, d);
-            pixels->setColor(i, j, color.getOfColor());
+            ca->setColor(i, j, color);
         }
     }
+    ca->setOfPixels(*pixels);
 }

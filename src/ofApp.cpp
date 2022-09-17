@@ -14,10 +14,9 @@ void ofApp::setup()
     h = 480;
     colorPixels.allocate(w, h, OF_PIXELS_RGB);
 
-    scene.ca = std::move(std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f));
+    scene.ca = std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f, 2);
     scene.pixels = &colorPixels;
-    scene.shader = std::move(std::make_unique<LambertianShader>());
-    // scene.shader = std::move(std::make_unique<NormShader>());
+    scene.shader = std::make_unique<LambertianShader>();
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
