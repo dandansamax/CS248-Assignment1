@@ -1,22 +1,34 @@
 #include "Scene.h"
+#include "Utils.h"
 
-Vector3f Scene::getColorByED(Vector3f e, Vector3f d)
+Vector3f Scene::getColorByED(const Vector3f &e, const Vector3f &d)
 {
     std::shared_ptr<TQueue> q = make_shared<TQueue>();
-    for (auto obj : objects)
-    {
-        obj->getIntersection(e, d, q);
-    }
-
     // no intersection
-    if (q->empty())
+    if (!getIntersections(objects, e, d, q))
     {
         return Vector3f();
     }
 
-    std::sort(q->begin(), q->end());
+    const TRecord &rec = sortAndGetMinK(q);
 
-    return shader->getColor(lights, objects, e, d, q->back());
+    Vector3f color = shader->getColor(lights, objects, e, d, rec);
+
+    if (rec.target->specular_reflection)
+    {
+        std::shared_ptr<TQueue> spec_q = make_shared<TQueue>();
+        Vector3f d = (rec.inter_point - e).normalize();
+        Vector3f n = rec.normal;
+        Vector3f r = d - 2 * d.dot(n) * n;
+        Vector3f e = rec.inter_point + r * eps;
+        if (getIntersections(objects, e, r, spec_q))
+        {
+            const TRecord &spec_rec = sortAndGetMinK(spec_q);
+            color = (1 - rec.target->km) * color + rec.target->km * shader->getColor(lights, objects, e, r, spec_rec);
+        }
+    }
+
+    return color;
 }
 
 void Scene::render()

@@ -10,7 +10,7 @@
 class Scene
 {
 private:
-    Vector3f getColorByED(Vector3f e, Vector3f d);
+    Vector3f getColorByED(const Vector3f &e, const Vector3f &d);
 
 public:
     ofPixels *pixels;

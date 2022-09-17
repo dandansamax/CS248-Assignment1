@@ -27,7 +27,9 @@ void ofApp::setup()
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
     scene.objects.push_back(
         std::make_shared<Cylinder>(Vector3f(0, 0, 2), Vector3f(0.5, 1, -0.2), 0.5, 1, -1, Vector3f(1, 1, 0)));
-    scene.objects.push_back(std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5)));
+    auto plane = std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5));
+    plane->set_specular(0.5);
+    scene.objects.push_back(plane);
 }
 
 //--------------------------------------------------------------

@@ -18,7 +18,7 @@ struct TRecord
     Vector3f normal;
     const GeoObject *target;
 
-    bool operator<(const TRecord &b) const { return t > b.t; }
+    bool operator<(const TRecord &b) const { return t < b.t; }
 };
 
 using TQueue = std::vector<TRecord>;
@@ -26,11 +26,14 @@ class GeoObject
 {
 public:
     Vector3f color;
+    bool specular_reflection = false;
+    float km = 0.3;
     GeoObject(Vector3f color) : color(color) {}
 
     // make sure that t0 is less than t1
     virtual bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const = 0;
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
+
     void push_queue(std::shared_ptr<TQueue> q, float t, const Vector3f &inter_point, const Vector3f &normal,
                     const GeoObject *target) const
     {
@@ -40,7 +43,6 @@ public:
         }
         q->push_back(TRecord(t, inter_point, normal, target));
     }
-
     void push_queue(std::shared_ptr<TQueue> q, const TRecord &rec) const
     {
         if (!q)
@@ -48,6 +50,13 @@ public:
             return;
         }
         q->push_back(rec);
+    }
+
+    GeoObject &set_specular(float km)
+    {
+        this->specular_reflection = true;
+        this->km = km;
+        return *this;
     }
 };
 
