@@ -8,7 +8,7 @@ class GeoObject;
 
 struct TRecord
 {
-    TRecord(float t, Vector3f inter_point, Vector3f normal, GeoObject *target)
+    TRecord(float t, Vector3f inter_point, Vector3f normal, const GeoObject *target)
         : t(t), inter_point(inter_point), normal(normal), target(target)
     {
     }
@@ -16,7 +16,7 @@ struct TRecord
     float t;
     Vector3f inter_point;
     Vector3f normal;
-    GeoObject *target;
+    const GeoObject *target;
 
     bool operator<(const TRecord &b) const { return t > b.t; }
 };
@@ -27,11 +27,28 @@ class GeoObject
 public:
     Vector3f color;
     GeoObject(Vector3f color) : color(color) {}
-    // virtual ~GeoObject() {}
 
     // make sure that t0 is less than t1
     virtual bool getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const = 0;
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
+    void push_queue(std::shared_ptr<TQueue> q, float t, const Vector3f &inter_point, const Vector3f &normal,
+                    const GeoObject *target) const
+    {
+        if (!q)
+        {
+            return;
+        }
+        q->push_back(TRecord(t, inter_point, normal, target));
+    }
+
+    void push_queue(std::shared_ptr<TQueue> q, const TRecord &rec) const
+    {
+        if (!q)
+        {
+            return;
+        }
+        q->push_back(rec);
+    }
 };
 
 class Sphere : public GeoObject

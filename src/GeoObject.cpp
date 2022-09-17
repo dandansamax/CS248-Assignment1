@@ -33,7 +33,7 @@ bool Sphere::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_p
             continue;
         flag = true;
         Vector3f point = e + d * i;
-        q->push_back(TRecord(i, point, getNormal(e, point), (GeoObject *)this));
+        push_queue(q, i, point, getNormal(e, point), (GeoObject *)this);
     }
     return flag;
 }
@@ -55,7 +55,7 @@ bool Elipsoid::getIntersection(const Vector3f &e, const Vector3f &d, std::shared
             continue;
         flag = true;
         Vector3f point = e + d * i;
-        q->push_back(TRecord(i, point, getNormal(e, point), (GeoObject *)this));
+        push_queue(q, i, point, getNormal(e, point), (GeoObject *)this);
     }
     return flag;
 }
@@ -73,7 +73,7 @@ bool Plane::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_pt
     if (t > 0)
     {
         Vector3f point = e + d * t;
-        q->push_back(TRecord(t, point, getNormal(e, point), (GeoObject *)this));
+        push_queue(q, t, point, getNormal(e, point), (GeoObject *)this);
         return true;
     }
     else
@@ -113,7 +113,7 @@ bool Cylinder::getIntersection(const Vector3f &e, const Vector3f &d, std::shared
     for (auto &rec : *tmp_q)
     {
         rec.target = (GeoObject *)this;
-        q->push_back(rec);
+        push_queue(q, rec);
     }
     if (rnt1 && rnt2)
     {
@@ -136,12 +136,12 @@ bool Cylinder::getIntersection(const Vector3f &e, const Vector3f &d, std::shared
     Vector3f p1 = e + t1 * d;
     if (t0 > 0 && between2plane(p0))
     {
-        q->push_back(TRecord(t0, p0, getNormal(e, p0), (GeoObject *)this));
+        push_queue(q, t0, p0, getNormal(e, p0), (GeoObject *)this);
         flag = true;
     }
     if (t1 > 0 && between2plane(p1))
     {
-        q->push_back(TRecord(t1, p1, getNormal(e, p1), (GeoObject *)this));
+        push_queue(q, t1, p1, getNormal(e, p1), (GeoObject *)this);
         flag = true;
     }
     return flag;

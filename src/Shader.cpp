@@ -7,11 +7,10 @@ const float eps = 0.001f;
 static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objects, std::shared_ptr<Light> light,
                             const Vector3f &point)
 {
-    auto tmp_q = std::make_shared<TQueue>();
     Vector3f shadowRay = (light->position - point).normalize();
     for (auto &obj : objects)
     {
-        if (obj->getIntersection(point + eps * shadowRay, shadowRay, tmp_q))
+        if (obj->getIntersection(point + eps * shadowRay, shadowRay, nullptr))
         {
             return true;
         }
