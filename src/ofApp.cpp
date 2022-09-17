@@ -20,12 +20,19 @@ void ofApp::setup()
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
-    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0)));
-    scene.objects.push_back(
-        std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0)));
+
+    auto sphere = std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0));
+    sphere->set_specular(0.8);
+    scene.objects.push_back(sphere);
+
+    auto elipsoid = std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0));
+    scene.objects.push_back(elipsoid);
+
     scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
+
     scene.objects.push_back(
         std::make_shared<Cylinder>(Vector3f(0, 0, 2), Vector3f(0.5, 1, -0.2), 0.5, 1, -1, Vector3f(1, 1, 0)));
+
     auto plane = std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5));
     plane->set_specular(0.5);
     scene.objects.push_back(plane);

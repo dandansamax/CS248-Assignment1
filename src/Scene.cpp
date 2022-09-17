@@ -21,10 +21,11 @@ Vector3f Scene::getColorByED(const Vector3f &e, const Vector3f &d)
         Vector3f n = rec.normal;
         Vector3f r = d - 2 * d.dot(n) * n;
         Vector3f e = rec.inter_point + r * eps;
+        color = (1 - rec.target->km) * color;
         if (getIntersections(objects, e, r, spec_q))
         {
             const TRecord &spec_rec = sortAndGetMinK(spec_q);
-            color = (1 - rec.target->km) * color + rec.target->km * shader->getColor(lights, objects, e, r, spec_rec);
+            color += rec.target->km * shader->getColor(lights, objects, e, r, spec_rec);
         }
     }
 
