@@ -46,7 +46,7 @@ void ofApp::update()
     auto stop = high_resolution_clock::now();
     texColor.allocate(colorPixels);
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Takes " << duration.count() / 1000.0 << "ms to render" << endl;
+    cout << "Takes " << duration.count() / 1000.0 << "ms to render" << "\t\r" << std::flush;
 }
 
 //--------------------------------------------------------------
