@@ -11,7 +11,7 @@
 
 - [ ] Cone
 - [x] Cylinder
-- [ ] Cude
+- [ ] Cube
 - [x] Phong shading
 - [x] Mirror reflection
 - [x] Multiple lights
