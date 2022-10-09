@@ -22,18 +22,24 @@ void ofApp::setup()
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
 
     auto sphere = std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0));
-    sphere->set_specular(0.8);
+    // sphere->set_specular(0.8);
     scene.objects.push_back(sphere);
 
-    auto elipsoid = std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2), Vector3f(0, 1, 0));
+    auto elipsoid = std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2),
+                                               Vector3f(0, 1, 0));
+    elipsoid->rotate(3.14 * 5 / 6, 2);
+    elipsoid->scale(3);
+    std::cout << elipsoid->transformMat;
     scene.objects.push_back(elipsoid);
 
-    scene.objects.push_back(std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
-
     scene.objects.push_back(
-        std::make_shared<Cylinder>(Vector3f(0, 0, 2), Vector3f(0.5, 1, -0.2), 0.5, 1, -1, Vector3f(1, 1, 0)));
+        std::make_shared<Sphere>(Vector3f(-0.4, -0.3, -0.5), 0.2, Vector3f(0, 0, 1)));
 
-    auto plane = std::make_shared<Plane>(0, 1, 0, 1.4, Vector3f(0.5, 0.5, 0.5));
+    scene.objects.push_back(std::make_shared<Cylinder>(Vector3f(0, 0, 2), Vector3f(0.5, 1, -0.2),
+                                                       0.5, 1, -1, Vector3f(1, 1, 0)));
+
+    auto plane =
+        std::make_shared<Plane>(Vector3f(0, -1.4, 0), Vector3f(0, 1, 0), Vector3f(0.5, 0.5, 0.5));
     plane->set_specular(0.5);
     scene.objects.push_back(plane);
 }
@@ -46,7 +52,8 @@ void ofApp::update()
     auto stop = high_resolution_clock::now();
     texColor.allocate(colorPixels);
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Takes " << duration.count() / 1000.0 << "ms to render" << "\t\r" << std::flush;
+    cout << "Takes " << duration.count() / 1000.0 << "ms to render"
+         << "\t\r" << std::flush;
 }
 
 //--------------------------------------------------------------

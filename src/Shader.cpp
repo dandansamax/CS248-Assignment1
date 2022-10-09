@@ -5,7 +5,7 @@ static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objec
                             const Vector3f &point)
 {
     Vector3f shadowRay = (light->position - point).normalize();
-    return getIntersections(objects, Ray(point + eps * shadowRay, shadowRay) , nullptr);
+    return getAllObjIntersections(objects, Ray(point + eps * shadowRay, shadowRay) , nullptr);
 }
 
 Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,

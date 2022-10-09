@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Vector.h"
-#include "Ray.h"
-
 #include <memory>
 #include <queue>
+
+#include "Ray.h"
+#include "Vector.h"
 
 class GeoObject;
 
@@ -28,16 +28,17 @@ class GeoObject
 {
 public:
     Vector3f color;
+    Vector3f center;
     bool specular_reflection = false;
     float km = 0.3;
-    GeoObject(Vector3f color) : color(color) {}
+    Matrix4f transformMat;
 
-    // make sure that t0 is less than t1
-    virtual bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const = 0;
+    GeoObject(const Vector3f &color, const Vector3f &center) : color(color), center(center) {}
+
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
 
-    void pushQueue(std::shared_ptr<TQueue> q, float t, const Vector3f &inter_point, const Vector3f &normal,
-                    const GeoObject *target) const
+    void pushQueue(std::shared_ptr<TQueue> q, float t, const Vector3f &inter_point,
+                   const Vector3f &normal, const GeoObject *target) const
     {
         if (!q)
         {
@@ -61,23 +62,48 @@ public:
         return *this;
     }
 
-    bool getTransformIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) {
-        // TODO
-        return getIntersection(viewRay, q);
+    // Rotate along 0:x/1:y/2:z axis (in radian measure) (right hand)
+    void rotate(float angle, int axis)
+    {
+        transformMat = transformMat * getInverseRotationMat(angle, axis);
     }
+
+    // Tranlate in 3 dimension
+    void translate(const Vector3f &move)
+    {
+        transformMat = transformMat * getInverseTranslationMat(move);
+    }
+
+    void scale(float factor) { transformMat = transformMat * getInverseScaleMat(factor); }
+
+    bool getTransformIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q)
+    {
+        Ray tmp_viewRay = Ray(transformMat * viewRay.e, transformMat * viewRay.d);
+        return getIntersection(tmp_viewRay, q);
+    }
+
+    void resetTransformation() { transformMat = Matrix4f(); }
+
+private:
+    virtual bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const = 0;
+    Matrix4f getInverseRotationMat(float angle, int axis);
+    Matrix4f getInverseTranslationMat(const Vector3f &move);
+    Matrix4f getInverseScaleMat(float factor);
 };
 
 class Sphere : public GeoObject
 {
 private:
-    Vector3f c;
     float r;
 
 public:
     // (p-c)^2 - r^2 = 0
-    Sphere(Vector3f c, float r, Vector3f color) : GeoObject(color), c(c), r(r) {}
+    Sphere(Vector3f c, float r, Vector3f color) : GeoObject(color, c), r(r) {}
     bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const;
-    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const { return Vector3f(point - c).normalize(); }
+    Vector3f getNormal(const Vector3f &view, const Vector3f &point) const
+    {
+        return Vector3f(point - center).normalize();
+    }
 };
 
 class Elipsoid : public GeoObject
@@ -89,7 +115,7 @@ private:
 public:
     // (x-u)^2/a^2 + (y-v)^2/b^2 + (z-w)^2/c^2 - 1 = 0
     Elipsoid(Vector3f abc, Vector3f uvw, Vector3f color)
-        : GeoObject(color), abc(abc), uvw(uvw), normal_factor(2 / (abc * abc))
+        : GeoObject(color, uvw), abc(abc), uvw(uvw), normal_factor(2 / (abc * abc))
     {
     }
     bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const;
@@ -104,11 +130,10 @@ class Plane : public GeoObject
 public:
     Vector3f abc;
     float cons;
-    // ax + by + cz + cons = 0
-    Plane(float a, float b, float c, float cons, Vector3f color) : GeoObject(color), abc(Vector3f(a, b, c)), cons(cons)
+    Plane(Vector3f p, Vector3f norm, Vector3f color)
+        : GeoObject(color, p), abc(norm), cons(-p.dot(norm))
     {
     }
-    Plane(Vector3f p, Vector3f norm, Vector3f color) : GeoObject(color), abc(norm), cons(-p.dot(norm)) {}
 
     bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const;
     Vector3f getNormal(const Vector3f &view, const Vector3f &point) const
@@ -131,7 +156,10 @@ private:
     float r;
 
 public:
-    Circle(Vector3f center, float r, Vector3f norm, Vector3f color) : Plane(center, norm, color), c(center), r(r) {}
+    Circle(Vector3f center, float r, Vector3f norm, Vector3f color)
+        : Plane(center, norm, color), c(center), r(r)
+    {
+    }
     bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const;
 };
 
@@ -139,16 +167,18 @@ class Cylinder : public GeoObject
 {
 private:
     Circle c1, c2;
-    Vector3f center, direct;
+    Vector3f direct;
     float r;
 
     bool between2plane(const Vector3f &point) const { return !c1.side(point) && !c2.side(point); }
 
 public:
     // up_bound must be bigger than low_bound
-    Cylinder(Vector3f center, Vector3f direct, float r, float up_bound, float low_bound, Vector3f color)
-        : GeoObject(color), c1(Circle(center + direct * up_bound, r, direct.normalize(), color)),
-          c2(Circle(center + direct * low_bound, r, -direct.normalize(), color)), center(center),
+    Cylinder(Vector3f center, Vector3f direct, float r, float up_bound, float low_bound,
+             Vector3f color)
+        : GeoObject(color, center),
+          c1(Circle(center + direct * up_bound, r, direct.normalize(), color)),
+          c2(Circle(center + direct * low_bound, r, -direct.normalize(), color)),
           direct(direct.normalize()), r(r)
 
     {

@@ -2,17 +2,19 @@
 
 #include <algorithm>
 
-#include "Common.h"
 #include "ofColor.h"
+#include "GeoObject.h"
+#include "Vector.h"
+#include "Ray.h"
 
 
-static inline bool getIntersections(const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
+static inline bool getAllObjIntersections(const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
                                     std::shared_ptr<TQueue> q)
 {
     bool flag = false;
     for (auto obj : objects)
     {
-        if (obj->getIntersection(viewRay, q))
+        if (obj->getTransformIntersection(viewRay, q))
         {
             flag = true;
         }

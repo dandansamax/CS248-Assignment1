@@ -1,9 +1,8 @@
 #include <cmath>
-#include <utility>
 #include <memory>
+#include <utility>
 
 #include "GeoObject.h"
-#include "Ray.h"
 
 static inline bool solveQuadratic(float a, float b, float c, float &ans0, float &ans1)
 {
@@ -18,13 +17,69 @@ static inline bool solveQuadratic(float a, float b, float c, float &ans0, float 
     return true;
 }
 
+Matrix4f GeoObject::getInverseRotationMat(float angle, int axis)
+{
+    Matrix4f a = getInverseTranslationMat(center);
+    Matrix4f rotation = Matrix4f();
+    Matrix4f aIn = getInverseTranslationMat(-center);
+
+    switch (axis)
+    {
+    // X-axis
+    case 0:
+        rotation.row[1].y = std::cos(-angle);
+        rotation.row[1].z = -std::sin(-angle);
+        rotation.row[2].y = std::sin(-angle);
+        rotation.row[2].z = std::cos(-angle);
+        break;
+    // Y-axis
+    case 1:
+        rotation.row[2].z = std::cos(-angle);
+        rotation.row[2].x = -std::sin(-angle);
+        rotation.row[0].z = std::sin(-angle);
+        rotation.row[0].x = std::cos(-angle);
+        break;
+    // Z-axis
+    case 2:
+        rotation.row[0].x = std::cos(-angle);
+        rotation.row[0].y = -std::sin(-angle);
+        rotation.row[1].x = std::sin(-angle);
+        rotation.row[1].y = std::cos(-angle);
+        break;
+    default:
+        return Matrix4f();
+    }
+    return aIn * rotation * a;
+}
+
+Matrix4f GeoObject::getInverseTranslationMat(const Vector3f &move)
+{
+    Matrix4f rnt = Matrix4f();
+    rnt.row[0].w = -move.x;
+    rnt.row[1].w = -move.y;
+    rnt.row[2].w = -move.z;
+    return rnt;
+}
+
+Matrix4f GeoObject::getInverseScaleMat(float factor)
+{
+    Matrix4f a = getInverseTranslationMat(center);
+    Matrix4f scale = Matrix4f();
+    Matrix4f aIn = getInverseTranslationMat(-center);
+    scale.row[0].x = 1.0 / factor;
+    scale.row[1].y = 1.0 / factor;
+    scale.row[2].z = 1.0 / factor;
+
+    return aIn * scale * a;
+}
+
 bool Sphere::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
     auto e = viewRay.getE3f();
     auto d = viewRay.getD3f();
     float A = d.dot(d);
-    float B = 2 * d.dot(e - c);
-    float C = (e - c).dot(e - c) - r * r;
+    float B = 2 * d.dot(e - center);
+    float C = (e - center).dot(e - center) - r * r;
     float t[2];
     if (!solveQuadratic(A, B, C, t[0], t[1]))
     {
