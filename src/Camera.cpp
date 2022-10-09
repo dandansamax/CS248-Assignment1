@@ -13,7 +13,7 @@ Camera::Camera(Vector3f position, Vector3f viewDirection, int width, int height,
 }
 
 // normalization not guaranteed
-std::pair<Vector3f, Vector3f> Camera::getViewRay(int i, int j)
+Ray Camera::getViewRay(int i, int j)
 {
     Vector3f e, d;
     float u_scalar = -r + 2 * r * ((float)i + 0.5) / width;
@@ -28,7 +28,7 @@ std::pair<Vector3f, Vector3f> Camera::getViewRay(int i, int j)
         d = -w;
         e = position + u_scalar * u + v_scalar * v;
     }
-    return std::make_pair(e, d);
+    return Ray(e, d);
 }
 
 void Camera::movePosition(Vector3f duration) { position += duration; }
@@ -39,7 +39,7 @@ void Camera::setOfPixels(ofPixels &pixels) const
     {
         for (int j = 0; j < height / MSAA_factor; j++)
         {
-            pixels.setColor(i, j, getMsaaAverageColor(i, j).getOfColor());
+            pixels.setColor(i, j, getOfColor(getMsaaAverageColor(i, j)));
         }
     }
 }

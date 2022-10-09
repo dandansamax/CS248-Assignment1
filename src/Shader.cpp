@@ -5,12 +5,12 @@ static inline bool inShadow(const std::vector<std::shared_ptr<GeoObject>> &objec
                             const Vector3f &point)
 {
     Vector3f shadowRay = (light->position - point).normalize();
-    return getIntersections(objects, point + eps * shadowRay, shadowRay, nullptr);
+    return getIntersections(objects, Ray(point + eps * shadowRay, shadowRay) , nullptr);
 }
 
 Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                                    const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e,
-                                    const Vector3f &d, const TRecord &record)
+                                    const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
+                                    const TRecord &record)
 {
     Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();
@@ -32,14 +32,14 @@ Vector3f LambertianShader::getColor(const std::vector<std::shared_ptr<Light>> &l
 }
 
 Vector3f PhongShader::getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                               const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e,
-                               const Vector3f &d, const TRecord &record)
+                               const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
+                               const TRecord &record)
 {
     Vector3f p = record.inter_point;
     Vector3f rnt = Vector3f();
     Vector3f normal = record.normal;
     Vector3f color = record.target->color;
-    Vector3f v = -d.normalize();
+    Vector3f v = -viewRay.getD3f().normalize();
 
     for (auto light : lights)
     {

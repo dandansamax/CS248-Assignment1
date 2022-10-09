@@ -1,7 +1,9 @@
 #include <cmath>
 #include <utility>
+#include <memory>
 
 #include "GeoObject.h"
+#include "Ray.h"
 
 static inline bool solveQuadratic(float a, float b, float c, float &ans0, float &ans1)
 {
@@ -16,8 +18,10 @@ static inline bool solveQuadratic(float a, float b, float c, float &ans0, float 
     return true;
 }
 
-bool Sphere::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
+bool Sphere::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
+    auto e = viewRay.getE3f();
+    auto d = viewRay.getD3f();
     float A = d.dot(d);
     float B = 2 * d.dot(e - c);
     float C = (e - c).dot(e - c) - r * r;
@@ -33,13 +37,15 @@ bool Sphere::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_p
             continue;
         flag = true;
         Vector3f point = e + d * i;
-        push_queue(q, i, point, getNormal(e, point), (GeoObject *)this);
+        pushQueue(q, i, point, getNormal(e, point), (GeoObject *)this);
     }
     return flag;
 }
 
-bool Elipsoid::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
+bool Elipsoid::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
+    auto e = viewRay.getE3f();
+    auto d = viewRay.getD3f();
     float A = ((d * d) / (abc * abc)).sum();
     float B = ((2 * (e - uvw) * d) / (abc * abc)).sum();
     float C = (((e - uvw) * (e - uvw)) / (abc * abc)).sum() - 1;
@@ -55,14 +61,15 @@ bool Elipsoid::getIntersection(const Vector3f &e, const Vector3f &d, std::shared
             continue;
         flag = true;
         Vector3f point = e + d * i;
-        push_queue(q, i, point, getNormal(e, point), (GeoObject *)this);
+        pushQueue(q, i, point, getNormal(e, point), (GeoObject *)this);
     }
     return flag;
 }
 
-bool Plane::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
+bool Plane::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
-
+    auto e = viewRay.getE3f();
+    auto d = viewRay.getD3f();
     float tmp = abc.dot(d);
     if (tmp == 0.0f)
     {
@@ -73,7 +80,7 @@ bool Plane::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_pt
     if (t > 0)
     {
         Vector3f point = e + d * t;
-        push_queue(q, t, point, getNormal(e, point), (GeoObject *)this);
+        pushQueue(q, t, point, getNormal(e, point), (GeoObject *)this);
         return true;
     }
     else
@@ -82,11 +89,12 @@ bool Plane::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_pt
     }
 }
 
-bool Circle::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
+bool Circle::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
-
+    auto e = viewRay.getE3f();
+    auto d = viewRay.getD3f();
     auto tmp_q = std::make_shared<TQueue>();
-    bool rnt = Plane::getIntersection(e, d, tmp_q);
+    bool rnt = Plane::getIntersection(viewRay, tmp_q);
     if (!rnt)
     {
         return false;
@@ -105,15 +113,17 @@ bool Circle::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_p
     }
 }
 
-bool Cylinder::getIntersection(const Vector3f &e, const Vector3f &d, std::shared_ptr<TQueue> q) const
+bool Cylinder::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
+    auto e = viewRay.getE3f();
+    auto d = viewRay.getD3f();
     auto tmp_q = std::make_shared<TQueue>();
-    bool rnt1 = c1.getIntersection(e, d, tmp_q);
-    bool rnt2 = c2.getIntersection(e, d, tmp_q);
+    bool rnt1 = c1.getIntersection(viewRay, tmp_q);
+    bool rnt2 = c2.getIntersection(viewRay, tmp_q);
     for (auto &rec : *tmp_q)
     {
         rec.target = (GeoObject *)this;
-        push_queue(q, rec);
+        pushQueue(q, rec);
     }
     if (rnt1 && rnt2)
     {
@@ -136,12 +146,12 @@ bool Cylinder::getIntersection(const Vector3f &e, const Vector3f &d, std::shared
     Vector3f p1 = e + t1 * d;
     if (t0 > 0 && between2plane(p0))
     {
-        push_queue(q, t0, p0, getNormal(e, p0), (GeoObject *)this);
+        pushQueue(q, t0, p0, getNormal(e, p0), (GeoObject *)this);
         flag = true;
     }
     if (t1 > 0 && between2plane(p1))
     {
-        push_queue(q, t1, p1, getNormal(e, p1), (GeoObject *)this);
+        pushQueue(q, t1, p1, getNormal(e, p1), (GeoObject *)this);
         flag = true;
     }
     return flag;

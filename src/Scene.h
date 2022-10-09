@@ -10,7 +10,7 @@
 class Scene
 {
 private:
-    Vector3f getColorByED(const Vector3f &e, const Vector3f &d);
+    Vector3f getColorByED(const Ray &viewRay);
 
 public:
     ofPixels *pixels;
@@ -19,6 +19,8 @@ public:
     std::vector<std::shared_ptr<Light>> lights;
     std::unique_ptr<Camera> ca;
     std::unique_ptr<Shader> shader;
+
+    std::shared_ptr<GeoObject> selectedObj;
 
     void render();
 };

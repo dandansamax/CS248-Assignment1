@@ -7,7 +7,7 @@ class Shader
 {
 public:
     virtual Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                              const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
+                              const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
                               const TRecord &record) = 0;
 };
 
@@ -16,8 +16,7 @@ class NaiveShader : public Shader
 public:
     NaiveShader() {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
-                      const TRecord &record)
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay, const TRecord &record)
     {
         return record.target->color;
     }
@@ -28,8 +27,7 @@ class NormShader : public Shader
 public:
     NormShader() {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
-                      const TRecord &record)
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay, const TRecord &record)
     {
         return (record.normal + Vector3f(1, 1, 1)) * 0.5;
     }
@@ -46,7 +44,7 @@ public:
     PhongShader() {}
     PhongShader(float ka, float kd, float ks) : ka(ka), kd(kd), ks(ks) {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
                       const TRecord &record);
 };
 
@@ -60,6 +58,6 @@ public:
     LambertianShader() {}
     LambertianShader(float ka, float kd) : ka(ka), kd(kd) {}
     Vector3f getColor(const std::vector<std::shared_ptr<Light>> &lights,
-                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Vector3f &e, const Vector3f &d,
+                      const std::vector<std::shared_ptr<GeoObject>> &objects, const Ray &viewRay,
                       const TRecord &record);
 };

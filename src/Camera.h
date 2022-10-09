@@ -1,8 +1,11 @@
 #pragma once
 
+#include <utility>
+
 #include "Vector.h"
 #include "ofPixels.h"
-#include "utility"
+#include "Utils.h"
+
 
 class Camera
 {
@@ -36,6 +39,6 @@ public:
     void setOfPixels(ofPixels &pixels) const;
     Vector3f getMsaaAverageColor(int x, int y) const;
 
-    std::pair<Vector3f, Vector3f> getViewRay(int i, int j);
+    Ray getViewRay(int i, int j);
     void movePosition(Vector3f duration);
 };
