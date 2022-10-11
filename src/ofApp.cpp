@@ -14,7 +14,8 @@ void ofApp::setup()
     h = 480;
     colorPixels.allocate(w, h, OF_PIXELS_RGB);
 
-    scene.ca = std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f, 1);
+    scene.ca =
+        std::make_unique<Camera>(Vector3f(0, 0, -1), Vector3f(0, 0, 1), 1.0f, w, h, 2.0f, 1.5f, 1);
     scene.pixels = &colorPixels;
     scene.shader = std::make_unique<LambertianShader>();
     // scene.shader = std::make_unique<NormShader>();
@@ -23,15 +24,11 @@ void ofApp::setup()
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
 
     auto sphere = std::make_shared<Sphere>(Vector3f(-0.8, 0.8, 1), 0.5, Vector3f(1, 0, 0));
-    // sphere->set_specular(0.8);
+    sphere->set_specular(0.8);
     scene.objects.push_back(sphere);
 
     auto elipsoid = std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2),
                                                Vector3f(0, 1, 0));
-    // elipsoid->rotate(3.14 * 3 / 6, 2);
-    // elipsoid->scale(3);
-    // elipsoid->translate(Vector3f(1, 1, 1));
-    std::cout << elipsoid->transformMat;
     scene.objects.push_back(elipsoid);
 
     scene.objects.push_back(
@@ -68,7 +65,6 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    std::cout << key << " " << std::endl;
     switch (key)
     {
     case 'p':
@@ -78,7 +74,7 @@ void ofApp::keyPressed(int key)
         }
         else
         {
-            scene.ca->setPerspective(1.0f);
+            scene.ca->setPerspective();
         }
         break;
     case 'q':
@@ -87,10 +83,10 @@ void ofApp::keyPressed(int key)
     case 'e':
         scene.shader = std::move(std::make_unique<PhongShader>());
         break;
-    case 'w':
+    case 'n':
         scene.ca->movePosition(Vector3f(0, 0, 0.1f));
         break;
-    case 's':
+    case 'm':
         scene.ca->movePosition(Vector3f(0, 0, -0.1f));
         break;
     case 'a':
@@ -99,11 +95,14 @@ void ofApp::keyPressed(int key)
     case 'd':
         scene.ca->movePosition(Vector3f(0.1f, 0, 0));
         break;
-    case 32:
+    case 'w':
         scene.ca->movePosition(Vector3f(0, 0.1f, 0));
         break;
-    case 'x':
+    case 's':
         scene.ca->movePosition(Vector3f(0, -0.1f, 0));
+        break;
+    case ',':
+        scene.ca->reset();
         break;
 
     // Left arrow
@@ -178,6 +177,7 @@ void ofApp::mousePressed(int x, int y, int button)
         break;
 
     default:
+        std::cout << button << " " << std::endl;
         break;
     }
 }
@@ -190,6 +190,16 @@ void ofApp::mouseEntered(int x, int y) {}
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y) {}
+
+void ofApp::mouseScrolled(ofMouseEventArgs &args)
+{
+    if (args.scrollY == 1){
+        scene.ca->zoom(0.05f);
+    }
+    else if (args.scrollY == -1){
+        scene.ca->zoom(-0.05f);
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h) {}

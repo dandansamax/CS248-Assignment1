@@ -1,16 +1,18 @@
 #include "Camera.h"
 
-Camera::Camera(Vector3f position, Vector3f viewDirection, int width, int height, float r, float t,
-               int MSAA_factor)
-    : pixelBuffer(std::make_unique<Vector3f[]>(width * height * MSAA_factor * MSAA_factor)),
-      width(width * MSAA_factor), height(height * MSAA_factor), r(r), t(t), MSAA_factor(MSAA_factor)
+Camera::Camera(Vector3f position, Vector3f viewDirection, float focalLength, int width, int height,
+               float r, float t, int Msaafactor)
+    : position(position), focalLength(focalLength), positionBack(position),
+      focalLengthBack(focalLength),
+      pixelBuffer(std::make_unique<Vector3f[]>(width * height * Msaafactor * Msaafactor)),
+      width(width * Msaafactor), height(height * Msaafactor), r(r), t(t), Msaafactor(Msaafactor)
 {
-    this->position = position;
-
     w = -viewDirection.normalize();
     Vector3f up(0, -1, 0);
     u = up.cross(w).normalize();
     v = w.cross(u);
+
+    uBack = u, vBack = v, wBack = w;
 }
 
 // normalization not guaranteed
@@ -21,13 +23,13 @@ Ray Camera::getViewRay(int i, int j)
     float v_scalar = -t + 2 * t * ((float)j + 0.5) / height;
     if (perspective)
     {
-        d = -focal_length * w + u_scalar * u + v_scalar * v;
+        d = -focalLength * w + u_scalar * u + v_scalar * v;
         e = position;
     }
     else
     {
         d = -w;
-        e = position + u_scalar * u + v_scalar * v;
+        e = -focalLength * w + position + u_scalar * u + v_scalar * v;
     }
     return Ray(e, d);
 }
@@ -36,9 +38,9 @@ void Camera::movePosition(Vector3f duration) { position += duration; }
 
 void Camera::setOfPixels(ofPixels &pixels) const
 {
-    for (int i = 0; i < width / MSAA_factor; i++)
+    for (int i = 0; i < width / Msaafactor; i++)
     {
-        for (int j = 0; j < height / MSAA_factor; j++)
+        for (int j = 0; j < height / Msaafactor; j++)
         {
             pixels.setColor(i, j, getOfColor(getMsaaAverageColor(i, j)));
         }
@@ -48,16 +50,16 @@ void Camera::setOfPixels(ofPixels &pixels) const
 Vector3f Camera::getMsaaAverageColor(int x, int y) const
 {
     Vector3f sum;
-    x *= MSAA_factor;
-    y *= MSAA_factor;
-    for (int i = x; i < x + MSAA_factor; i++)
+    x *= Msaafactor;
+    y *= Msaafactor;
+    for (int i = x; i < x + Msaafactor; i++)
     {
-        for (int j = y; j < y + MSAA_factor; j++)
+        for (int j = y; j < y + Msaafactor; j++)
         {
             sum += pixelBuffer[i * height + j];
         }
     }
-    return sum / (MSAA_factor * MSAA_factor);
+    return sum / (Msaafactor * Msaafactor);
 }
 
 // 0: Left, 1: Up, 2: Right, 3: Down
@@ -80,3 +82,5 @@ Vector3f Camera::getDirection(int direction)
     }
     return Vector3f();
 }
+
+void Camera::zoom(float duration) { focalLength += focalLength + duration > eps ? duration : 0; }
