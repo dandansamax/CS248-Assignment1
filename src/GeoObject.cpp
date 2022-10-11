@@ -17,62 +17,6 @@ static inline bool solveQuadratic(float a, float b, float c, float &ans0, float 
     return true;
 }
 
-Matrix4f GeoObject::getRotationMat(float angle, int axis)
-{
-    Matrix4f a = getTranslationMat(-center);
-    Matrix4f rotation = Matrix4f();
-    Matrix4f aIn = getTranslationMat(center);
-
-    switch (axis)
-    {
-    // X-axis
-    case 0:
-        rotation.row[1].y = std::cos(angle);
-        rotation.row[1].z = -std::sin(angle);
-        rotation.row[2].y = std::sin(angle);
-        rotation.row[2].z = std::cos(angle);
-        break;
-    // Y-axis
-    case 1:
-        rotation.row[2].z = std::cos(angle);
-        rotation.row[2].x = -std::sin(angle);
-        rotation.row[0].z = std::sin(angle);
-        rotation.row[0].x = std::cos(angle);
-        break;
-    // Z-axis
-    case 2:
-        rotation.row[0].x = std::cos(angle);
-        rotation.row[0].y = -std::sin(angle);
-        rotation.row[1].x = std::sin(angle);
-        rotation.row[1].y = std::cos(angle);
-        break;
-    default:
-        return Matrix4f();
-    }
-    return aIn * rotation * a;
-}
-
-Matrix4f GeoObject::getTranslationMat(const Vector3f &move)
-{
-    Matrix4f rnt = Matrix4f();
-    rnt.row[0].w = move.x;
-    rnt.row[1].w = move.y;
-    rnt.row[2].w = move.z;
-    return rnt;
-}
-
-Matrix4f GeoObject::getScaleMat(float factor)
-{
-    Matrix4f a = getTranslationMat(-center);
-    Matrix4f scale = Matrix4f();
-    Matrix4f aIn = getTranslationMat(center);
-    scale.row[0].x = factor;
-    scale.row[1].y = factor;
-    scale.row[2].z = factor;
-
-    return aIn * scale * a;
-}
-
 bool Sphere::getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const
 {
     auto e = viewRay.getE3f();

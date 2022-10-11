@@ -36,9 +36,12 @@ public:
     Ray getViewRay(int i, int j);
     // 0: Left, 1: Up, 2: Right, 3: Down
     Vector3f getDirection(int direction);
-    
-    void movePosition(Vector3f duration);
+
+    void pan(float distance, int direction);
+    void dolly(float distance);
     void zoom(float duration);
+    // 0: Left, 1: Up, 2: Right, 3: Down
+    void orbit(float angle, float centerDis, int direction);
 
     void reset()
     {

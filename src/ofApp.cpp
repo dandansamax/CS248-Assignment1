@@ -84,22 +84,35 @@ void ofApp::keyPressed(int key)
         scene.shader = std::move(std::make_unique<PhongShader>());
         break;
     case 'n':
-        scene.ca->movePosition(Vector3f(0, 0, 0.1f));
+        scene.ca->dolly(0.1f);
         break;
     case 'm':
-        scene.ca->movePosition(Vector3f(0, 0, -0.1f));
+        scene.ca->dolly(-0.1f);
         break;
     case 'a':
-        scene.ca->movePosition(Vector3f(-0.1f, 0, 0));
-        break;
-    case 'd':
-        scene.ca->movePosition(Vector3f(0.1f, 0, 0));
+        scene.ca->pan(0.1f, 0);
         break;
     case 'w':
-        scene.ca->movePosition(Vector3f(0, 0.1f, 0));
+        scene.ca->pan(0.1f, 1);
+        break;
+    case 'd':
+        scene.ca->pan(0.1f, 2);
         break;
     case 's':
-        scene.ca->movePosition(Vector3f(0, -0.1f, 0));
+        scene.ca->pan(0.1f, 3);
+        break;
+
+    case 'f':
+        scene.ca->orbit(pi / 18, 3, 0);
+        break;
+    case 't':
+        scene.ca->orbit(pi / 18, 3, 1);
+        break;
+    case 'h':
+        scene.ca->orbit(pi / 18, 3, 2);
+        break;
+    case 'g':
+        scene.ca->orbit(pi / 18, 3, 3);
         break;
     case ',':
         scene.ca->reset();
@@ -193,10 +206,12 @@ void ofApp::mouseExited(int x, int y) {}
 
 void ofApp::mouseScrolled(ofMouseEventArgs &args)
 {
-    if (args.scrollY == 1){
+    if (args.scrollY == 1)
+    {
         scene.ca->zoom(0.05f);
     }
-    else if (args.scrollY == -1){
+    else if (args.scrollY == -1)
+    {
         scene.ca->zoom(-0.05f);
     }
 }

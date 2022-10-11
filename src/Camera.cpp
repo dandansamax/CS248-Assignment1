@@ -34,8 +34,6 @@ Ray Camera::getViewRay(int i, int j)
     return Ray(e, d);
 }
 
-void Camera::movePosition(Vector3f duration) { position += duration; }
-
 void Camera::setOfPixels(ofPixels &pixels) const
 {
     for (int i = 0; i < width / Msaafactor; i++)
@@ -84,3 +82,35 @@ Vector3f Camera::getDirection(int direction)
 }
 
 void Camera::zoom(float duration) { focalLength += focalLength + duration > eps ? duration : 0; }
+
+void Camera::orbit(float angle, float centerDis, int direction)
+{
+    Vector3f center = position + centerDis * (-w);
+    Matrix4f rotationMat;
+    switch (direction)
+    {
+    case 2:
+        angle = -angle;
+    case 0:
+        rotationMat = Matrix4f::getRotationMat(angle, center, 1);
+        break;
+    case 1:
+        angle = -angle;
+    case 3:
+    {
+        float theta = std::atan(w.x / w.z);
+        theta = Vector3f(0, 0, 1).dot(w) > 0 ? theta : pi + theta;
+        rotationMat = Matrix4f::getRotationMat(theta, center, 1) *
+                      Matrix4f::getRotationMat(angle, center, 0) *
+                      Matrix4f::getRotationMat(-theta, center, 1);
+        break;
+    }
+    }
+    w = (rotationMat * w.toDirection4f()).getVector3f();
+    u = (rotationMat * u.toDirection4f()).getVector3f();
+    v = (rotationMat * v.toDirection4f()).getVector3f();
+    position = (rotationMat * position.toPoint4f()).getVector3f();
+}
+
+void Camera::pan(float distance, int direction) { position += distance * getDirection(direction); }
+void Camera::dolly(float distance) { position += distance * (-w); }

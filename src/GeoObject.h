@@ -68,22 +68,22 @@ public:
     // Rotate along 0:x/1:y/2:z axis (in radian measure) (right hand)
     void rotate(float angle, int axis)
     {
-        transformMat = getRotationMat(angle, axis) * transformMat;
-        inverseMat = inverseMat * getRotationMat(-angle, axis);
+        transformMat = Matrix4f::getRotationMat(angle, center, axis) * transformMat;
+        inverseMat = inverseMat * Matrix4f::getRotationMat(-angle, center, axis);
     }
 
     // Tranlate in 3 dimension
     void translate(const Vector3f &move)
     {
         center += move;
-        transformMat = getTranslationMat(move) * transformMat;
-        inverseMat = inverseMat * getTranslationMat(-move);
+        transformMat = Matrix4f::getTranslationMat(move) * transformMat;
+        inverseMat = inverseMat * Matrix4f::getTranslationMat(-move);
     }
 
     void scale(float factor)
     {
-        transformMat = getScaleMat(factor) * transformMat;
-        inverseMat = inverseMat * getScaleMat(1 / factor);
+        transformMat = Matrix4f::getScaleMat(factor, center) * transformMat;
+        inverseMat = inverseMat * Matrix4f::getScaleMat(1 / factor, center);
     }
 
     void reset()
@@ -114,9 +114,6 @@ public:
 
 private:
     virtual bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const = 0;
-    Matrix4f getRotationMat(float angle, int axis);
-    Matrix4f getTranslationMat(const Vector3f &move);
-    Matrix4f getScaleMat(float factor);
 };
 
 class Sphere : public GeoObject
