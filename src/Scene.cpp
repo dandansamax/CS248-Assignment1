@@ -66,10 +66,22 @@ void Scene::select(int x, int y)
 }
 
 // 0: Left, 1: Up, 2: Right, 3: Down
-void Scene::objMoveInCaSpace(float distance, int direction){
-    if (!selectedObj){
+void Scene::objMoveInCaSpace(float distance, int direction)
+{
+    if (!selectedObj)
+    {
         return;
     }
     selectedObj->translate(ca->getDirection(direction) * distance);
+    return;
+}
+
+void Scene::objScale(float factor)
+{
+    if (!selectedObj)
+    {
+        return;
+    }
+    selectedObj->scale(factor);
     return;
 }

@@ -125,6 +125,13 @@ void ofApp::keyPressed(int key)
     case 57359:
         scene.objMoveInCaSpace(0.1, 3);
         break;
+
+    case '+':
+        scene.objScale(1.1f);
+        break;
+    case '-':
+        scene.objScale(1.0f / 1.1f);
+        break;
     }
 }
 

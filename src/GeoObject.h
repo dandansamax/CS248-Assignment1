@@ -28,12 +28,15 @@ class GeoObject
 {
 public:
     Vector3f color;
-    Vector3f center;
+    Vector3f center, originCenter;
     bool specular_reflection = false;
     float km = 0.3f;
     Matrix4f transformMat, inverseMat;
 
-    GeoObject(const Vector3f &color, const Vector3f &center) : color(color), center(center) {}
+    GeoObject(const Vector3f &color, const Vector3f &center)
+        : color(color), center(center), originCenter(center)
+    {
+    }
 
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
 
@@ -72,6 +75,7 @@ public:
     // Tranlate in 3 dimension
     void translate(const Vector3f &move)
     {
+        center += move;
         transformMat = getTranslationMat(move) * transformMat;
         inverseMat = inverseMat * getTranslationMat(-move);
     }
@@ -82,7 +86,9 @@ public:
         inverseMat = inverseMat * getScaleMat(1 / factor);
     }
 
-    void reset() {
+    void reset()
+    {
+        center = originCenter;
         transformMat = Matrix4f();
         inverseMat = Matrix4f();
     }
@@ -90,7 +96,8 @@ public:
     bool getTransformIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q)
     {
         Ray tmp_viewRay = Ray(inverseMat * viewRay.e, inverseMat * viewRay.d);
-        if (!q){
+        if (!q)
+        {
             return getIntersection(tmp_viewRay, nullptr);
         }
         auto tmp_q = std::make_shared<TQueue>();
@@ -98,7 +105,8 @@ public:
         for (auto record : *tmp_q)
         {
             record.inter_point = (transformMat * record.inter_point.toPoint4f()).getVector3f();
-            record.normal = (transformMat * record.normal.toDirection4f()).getVector3f().normalize();
+            record.normal =
+                (transformMat * record.normal.toDirection4f()).getVector3f().normalize();
             q->push_back(record);
         }
         return rnt;
