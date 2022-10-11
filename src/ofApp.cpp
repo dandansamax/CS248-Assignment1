@@ -132,6 +132,30 @@ void ofApp::keyPressed(int key)
     case '-':
         scene.objScale(1.0f / 1.1f);
         break;
+
+    case 'j':
+        scene.objRotate(pi / 18, 0);
+        break;
+    case 'k':
+        scene.objRotate(pi / 18, 1);
+        break;
+    case 'l':
+        scene.objRotate(pi / 18, 2);
+        break;
+
+    case 'J':
+        scene.objRotate(-pi / 18, 0);
+        break;
+    case 'K':
+        scene.objRotate(-pi / 18, 1);
+        break;
+    case 'L':
+        scene.objRotate(-pi / 18, 2);
+        break;
+
+    case '.':
+        scene.objReset();
+        break;
     }
 }
 

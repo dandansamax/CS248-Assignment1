@@ -85,3 +85,23 @@ void Scene::objScale(float factor)
     selectedObj->scale(factor);
     return;
 }
+
+void Scene::objReset()
+{
+    if (!selectedObj)
+    {
+        return;
+    }
+    selectedObj->reset();
+    return;
+}
+
+void Scene::objRotate(float angle, int axis)
+{
+    if (!selectedObj)
+    {
+        return;
+    }
+    selectedObj->rotate(angle, axis);
+    return;
+}
