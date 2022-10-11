@@ -64,3 +64,12 @@ void Scene::select(int x, int y)
     selectedObj = rec.target;
     return;
 }
+
+// 0: Left, 1: Up, 2: Right, 3: Down
+void Scene::objMoveInCaSpace(float distance, int direction){
+    if (!selectedObj){
+        return;
+    }
+    selectedObj->translate(ca->getDirection(direction) * distance);
+    return;
+}

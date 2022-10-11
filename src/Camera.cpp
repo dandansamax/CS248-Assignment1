@@ -1,8 +1,9 @@
 #include "Camera.h"
 
-Camera::Camera(Vector3f position, Vector3f viewDirection, int width, int height, float r, float t, int MSAA_factor)
-    : pixelBuffer(std::make_unique<Vector3f[]>(width * height * MSAA_factor * MSAA_factor)), width(width * MSAA_factor),
-      height(height * MSAA_factor), r(r), t(t), MSAA_factor(MSAA_factor)
+Camera::Camera(Vector3f position, Vector3f viewDirection, int width, int height, float r, float t,
+               int MSAA_factor)
+    : pixelBuffer(std::make_unique<Vector3f[]>(width * height * MSAA_factor * MSAA_factor)),
+      width(width * MSAA_factor), height(height * MSAA_factor), r(r), t(t), MSAA_factor(MSAA_factor)
 {
     this->position = position;
 
@@ -57,4 +58,25 @@ Vector3f Camera::getMsaaAverageColor(int x, int y) const
         }
     }
     return sum / (MSAA_factor * MSAA_factor);
+}
+
+// 0: Left, 1: Up, 2: Right, 3: Down
+Vector3f Camera::getDirection(int direction)
+{
+    switch (direction)
+    {
+    case 0:
+        return -u;
+        break;
+    case 1:
+        return -v;
+        break;
+    case 2:
+        return u;
+        break;
+    case 3:
+        return v;
+        break;
+    }
+    return Vector3f();
 }

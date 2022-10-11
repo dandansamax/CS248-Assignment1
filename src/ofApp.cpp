@@ -68,6 +68,7 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
+    std::cout << key << " " << std::endl;
     switch (key)
     {
     case 'p':
@@ -103,6 +104,26 @@ void ofApp::keyPressed(int key)
         break;
     case 'x':
         scene.ca->movePosition(Vector3f(0, -0.1f, 0));
+        break;
+
+    // Left arrow
+    case 57356:
+        scene.objMoveInCaSpace(0.1, 0);
+        break;
+
+    // Up arrow
+    case 57357:
+        scene.objMoveInCaSpace(0.1, 1);
+        break;
+
+    // Right arrow
+    case 57358:
+        scene.objMoveInCaSpace(0.1, 2);
+        break;
+
+    // Down arrow
+    case 57359:
+        scene.objMoveInCaSpace(0.1, 3);
         break;
     }
 }

@@ -20,8 +20,11 @@ public:
     std::unique_ptr<Camera> ca;
     std::unique_ptr<Shader> shader;
 
-    const GeoObject *selectedObj;
+    GeoObject *selectedObj;
 
     void render();
     void select(int x, int y);
+
+    // 0: Left, 1: Up, 2: Right, 3: Down
+    void objMoveInCaSpace(float distance, int direction);
 };

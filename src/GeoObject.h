@@ -10,7 +10,7 @@ class GeoObject;
 
 struct TRecord
 {
-    TRecord(float t, Vector3f inter_point, Vector3f normal, const GeoObject *target)
+    TRecord(float t, Vector3f inter_point, Vector3f normal, GeoObject *target)
         : t(t), inter_point(inter_point), normal(normal), target(target)
     {
     }
@@ -18,7 +18,7 @@ struct TRecord
     float t;
     Vector3f inter_point;
     Vector3f normal;
-    const GeoObject *target;
+    GeoObject *target;
 
     bool operator<(const TRecord &b) const { return t < b.t; }
 };
@@ -38,7 +38,7 @@ public:
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
 
     void pushQueue(std::shared_ptr<TQueue> q, float t, const Vector3f &inter_point,
-                   const Vector3f &normal, const GeoObject *target) const
+                   const Vector3f &normal, GeoObject *target) const
     {
         if (!q)
         {
