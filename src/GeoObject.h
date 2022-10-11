@@ -30,8 +30,8 @@ public:
     Vector3f color;
     Vector3f center;
     bool specular_reflection = false;
-    float km = 0.3;
-    Matrix4f transformMat;
+    float km = 0.3f;
+    Matrix4f transformMat, inverseMat;
 
     GeoObject(const Vector3f &color, const Vector3f &center) : color(color), center(center) {}
 
@@ -65,30 +65,50 @@ public:
     // Rotate along 0:x/1:y/2:z axis (in radian measure) (right hand)
     void rotate(float angle, int axis)
     {
-        transformMat = transformMat * getInverseRotationMat(angle, axis);
+        transformMat = getRotationMat(angle, axis) * transformMat;
+        inverseMat = inverseMat * getRotationMat(-angle, axis);
     }
 
     // Tranlate in 3 dimension
     void translate(const Vector3f &move)
     {
-        transformMat = transformMat * getInverseTranslationMat(move);
+        transformMat = getTranslationMat(move) * transformMat;
+        inverseMat = inverseMat * getTranslationMat(-move);
     }
 
-    void scale(float factor) { transformMat = transformMat * getInverseScaleMat(factor); }
+    void scale(float factor)
+    {
+        transformMat = getScaleMat(factor) * transformMat;
+        inverseMat = inverseMat * getScaleMat(1 / factor);
+    }
+
+    void reset() {
+        transformMat = Matrix4f();
+        inverseMat = Matrix4f();
+    }
 
     bool getTransformIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q)
     {
-        Ray tmp_viewRay = Ray(transformMat * viewRay.e, transformMat * viewRay.d);
-        return getIntersection(tmp_viewRay, q);
+        Ray tmp_viewRay = Ray(inverseMat * viewRay.e, inverseMat * viewRay.d);
+        if (!q){
+            return getIntersection(tmp_viewRay, nullptr);
+        }
+        auto tmp_q = std::make_shared<TQueue>();
+        bool rnt = getIntersection(tmp_viewRay, tmp_q);
+        for (auto record : *tmp_q)
+        {
+            record.inter_point = (transformMat * record.inter_point.toPoint4f()).getVector3f();
+            record.normal = (transformMat * record.normal.toDirection4f()).getVector3f().normalize();
+            q->push_back(record);
+        }
+        return rnt;
     }
-
-    void resetTransformation() { transformMat = Matrix4f(); }
 
 private:
     virtual bool getIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q) const = 0;
-    Matrix4f getInverseRotationMat(float angle, int axis);
-    Matrix4f getInverseTranslationMat(const Vector3f &move);
-    Matrix4f getInverseScaleMat(float factor);
+    Matrix4f getRotationMat(float angle, int axis);
+    Matrix4f getTranslationMat(const Vector3f &move);
+    Matrix4f getScaleMat(float factor);
 };
 
 class Sphere : public GeoObject
