@@ -20,7 +20,8 @@ public:
     std::unique_ptr<Camera> ca;
     std::unique_ptr<Shader> shader;
 
-    std::shared_ptr<GeoObject> selectedObj;
+    const GeoObject *selectedObj;
 
     void render();
+    void select(int x, int y);
 };

@@ -17,6 +17,7 @@ void ofApp::setup()
     scene.ca = std::make_unique<Camera>(Vector3f(0, 0, 0), Vector3f(0, 0, 1), w, h, 2.0f, 1.5f, 1);
     scene.pixels = &colorPixels;
     scene.shader = std::make_unique<LambertianShader>();
+    // scene.shader = std::make_unique<NormShader>();
 
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene.lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
@@ -27,8 +28,9 @@ void ofApp::setup()
 
     auto elipsoid = std::make_shared<Elipsoid>(Vector3f(0.2, 0.4, 0.3), Vector3f(1.6, -0.5, 2),
                                                Vector3f(0, 1, 0));
-    elipsoid->rotate(3.14 * 5 / 6, 2);
-    elipsoid->scale(3);
+    // elipsoid->rotate(3.14 * 3 / 6, 2);
+    // elipsoid->scale(3);
+    // elipsoid->translate(Vector3f(1, 1, 1));
     std::cout << elipsoid->transformMat;
     scene.objects.push_back(elipsoid);
 
@@ -115,7 +117,18 @@ void ofApp::mouseMoved(int x, int y) {}
 void ofApp::mouseDragged(int x, int y, int button) {}
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {}
+void ofApp::mousePressed(int x, int y, int button)
+{
+    switch (button)
+    {
+    case 0:
+        scene.select(x, y);
+        break;
+
+    default:
+        break;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {}
