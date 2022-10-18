@@ -105,3 +105,44 @@ void Scene::objRotate(float angle, int axis)
     selectedObj->rotate(angle, axis);
     return;
 }
+
+void Scene::switchLight()
+{
+    int totNum = lights.size() + 1;
+    selectLight += 1;
+    if (selectLight >= totNum)
+    {
+        selectLight = 0;
+        std::cout << "Current selection: Camera" << std::endl;
+    }
+    else
+    {
+        std::cout << "Current selection: Light " << selectLight - 1 << std::endl;
+    }
+}
+
+void Scene::moveLight(float distance, int direction)
+{
+    if (selectLight == 0)
+    {
+        switch (direction)
+        {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            ca->pan(distance, direction);
+            break;
+        case 4:
+            ca->dolly(distance);
+            break;
+        case 5:
+            ca->dolly(-distance);
+            break;
+        }
+    }
+    else
+    {
+        lights[selectLight - 1]->move(distance, direction);
+    }
+}

@@ -21,6 +21,7 @@ public:
     std::unique_ptr<Shader> shader;
 
     GeoObject *selectedObj;
+    int selectLight = 0;
 
     void render();
     void select(int x, int y);
@@ -30,4 +31,7 @@ public:
     void objScale(float factor);
     void objRotate(float angle, int axis);
     void objReset();
+
+    void switchLight();
+    void moveLight(float distance, int direction);
 };

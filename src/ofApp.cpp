@@ -84,22 +84,26 @@ void ofApp::keyPressed(int key)
         scene.shader = std::move(std::make_unique<PhongShader>());
         break;
     case 'n':
-        scene.ca->dolly(0.1f);
+        scene.moveLight(0.1f, 4);
         break;
     case 'm':
-        scene.ca->dolly(-0.1f);
+        scene.moveLight(0.1f, 5);
         break;
     case 'a':
-        scene.ca->pan(0.1f, 0);
+        scene.moveLight(0.1f, 0);
         break;
     case 'w':
-        scene.ca->pan(0.1f, 1);
+        scene.moveLight(0.1f, 1);
         break;
     case 'd':
-        scene.ca->pan(0.1f, 2);
+        scene.moveLight(0.1f, 2);
         break;
     case 's':
-        scene.ca->pan(0.1f, 3);
+        scene.moveLight(0.1f, 3);
+        break;
+
+    case '/':
+        scene.switchLight();
         break;
 
     case 'f':
