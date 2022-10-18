@@ -1,4 +1,4 @@
-# CS248-Assignment 1
+# CS248-Assignment 2
 
 ## Step to run
 
@@ -9,75 +9,27 @@
 
 ## Optional functionality
 
-- [ ] Cone
-- [x] Cylinder
-- [ ] Cube
-- [x] Phong shading
-- [x] Mirror reflection
-- [x] Multiple lights
-
-#### Not required
-
-- [x] MSAA
-- [ ] Multi-thread
+- [ ] visual controls
+- [x] camera zooming / dolly
+- [ ] dynamic scene
+- [x] modify the position of the light source
 
 ## Operation
-| Key             | Operation                                          |
-| --------------- | -------------------------------------------------- |
-| P               | Switch between perspective and parallel projection |
-| Q               | To Lambertian shading                              |
-| E               | To Phong shading                                   |
-| W/A/S/D/X/Space | Move camera front/Left/back/Right/Down/Up          |
+| Key                      | Operation                                                      |
+| ------------------------ | -------------------------------------------------------------- |
+| P                        | Switch between perspective and parallel projection             |
+| Q                        | To Lambertian shading                                          |
+| E                        | To Phong shading                                               |
+| A/W/D/S                  | Pan camera left/up/right/down **or** Move light along x/y axis |
+| N/M                      | Dolly camera font/back **or** Move light along z axis          |
+| Mouse wheel              | Zoom camera                                                    |
+| /                        | Switch movement target among camera and all light sources      |
+| F/T/H/G                  | Orbit camera left/up/right/down                                |
+| Left mouse click         | Select object                                                  |
+| left/up/right/down arrow | Translate selected object left/up/right/down                   |
+| J/K/L/S-J/S-K/S-L        | Rotate selected object along x/y/z axis                        |
+| +/-                      | Scale selected object bigger/smaller                           |
 
-## Results
+## Enviroment
 
 Hardware: Intel Xeon Gold 6230 CPU @ 2.10GHz, 20 cores
-
-
-#### Without MSAA
-
-Parallel projection and Lambertian shading
-
-![para_lamb](images/para_lamb.png)
-
----
-
-Parallel projection and Phong shading
-
-![para_phong](images/para_phong.png)
-
----
-
-Perspective projection and Lambertian shading
-
-![pers_lamb](images/pers_lamb.png)
-
----
-
-Perspective projection and Phong shading
-
-![pers_phong](images/pers_phong.png)
-
-#### With 2xMSAA
-
-Parallel projection and Lambertian shading
-
-![para_lamb](images/para_lamb2x.png)
-
----
-
-Parallel projection and Phong shading
-
-![para_phong](images/para_phong2x.png)
-
----
-
-Perspective projection and Lambertian shading
-
-![pers_lamb](images/pers_lamb2x.png)
-
----
-
-Perspective projection and Phong shading
-
-![pers_phong](images/pers_phong2x.png)
