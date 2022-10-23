@@ -12,7 +12,7 @@ Project{
         name: { return FileInfo.baseName(sourceDirectory) }
 
         files: [
-            'src/*'
+            'src/**'
         ]
 
         of.addons: [

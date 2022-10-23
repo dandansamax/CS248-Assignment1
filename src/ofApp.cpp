@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Shader.h"
 #include "ofApp.h"
+#include "Mesh.h"
 
 using namespace std::chrono;
 
@@ -14,6 +15,7 @@ void ofApp::setup()
     h = 480;
     colorPixels.allocate(w, h, OF_PIXELS_RGB);
 
+    auto mesh = rasterizer::Mesh("mesh/teapot.obj");
     scene.ca =
         std::make_unique<Camera>(Vector3f(0, 0, -1), Vector3f(0, 0, 1), 1.0f, w, h, 2.0f, 1.5f, 1);
     scene.pixels = &colorPixels;
