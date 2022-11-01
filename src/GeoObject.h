@@ -106,7 +106,7 @@ public:
         {
             record.inter_point = (transformMat * record.inter_point.toPoint4f()).getVector3f();
             record.normal =
-                (transformMat * record.normal.toDirection4f()).getVector3f().normalize();
+                (inverseMat.T() * record.normal.toDirection4f()).getVector3f().normalize();
             q->push_back(record);
         }
         return rnt;
