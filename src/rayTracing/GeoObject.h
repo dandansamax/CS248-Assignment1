@@ -3,6 +3,7 @@
 #include <memory>
 #include <queue>
 
+#include "BaseObject.h"
 #include "Ray.h"
 #include "Vector.h"
 
@@ -24,19 +25,14 @@ struct TRecord
 };
 
 using TQueue = std::vector<TRecord>;
-class GeoObject
+class GeoObject : public BaseObject
 {
 public:
     Vector3f color;
-    Vector3f center, originCenter;
     bool specular_reflection = false;
     float km = 0.3f;
-    Matrix4f transformMat, inverseMat;
 
-    GeoObject(const Vector3f &color, const Vector3f &center)
-        : color(color), center(center), originCenter(center)
-    {
-    }
+    GeoObject(const Vector3f &color, const Vector3f &center) : BaseObject(center), color(color) {}
 
     virtual Vector3f getNormal(const Vector3f &view, const Vector3f &point) const = 0;
 
@@ -63,34 +59,6 @@ public:
         this->specular_reflection = true;
         this->km = km;
         return *this;
-    }
-
-    // Rotate along 0:x/1:y/2:z axis (in radian measure) (right hand)
-    void rotate(float angle, int axis)
-    {
-        transformMat = Matrix4f::getRotationMat(angle, center, axis) * transformMat;
-        inverseMat = inverseMat * Matrix4f::getRotationMat(-angle, center, axis);
-    }
-
-    // Tranlate in 3 dimension
-    void translate(const Vector3f &move)
-    {
-        center += move;
-        transformMat = Matrix4f::getTranslationMat(move) * transformMat;
-        inverseMat = inverseMat * Matrix4f::getTranslationMat(-move);
-    }
-
-    void scale(float factor)
-    {
-        transformMat = Matrix4f::getScaleMat(factor, center) * transformMat;
-        inverseMat = inverseMat * Matrix4f::getScaleMat(1 / factor, center);
-    }
-
-    void reset()
-    {
-        center = originCenter;
-        transformMat = Matrix4f();
-        inverseMat = Matrix4f();
     }
 
     bool getTransformIntersection(const Ray &viewRay, std::shared_ptr<TQueue> q)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <utility>
 
 #include "Utils.h"
@@ -17,6 +18,7 @@ private:
     float focalLengthBack = 1.0f;
 
     std::unique_ptr<Vector3f[]> pixelBuffer;
+    std::unique_ptr<float[]> zBuffer;
 
 public:
     bool perspective = false;
@@ -49,4 +51,20 @@ public:
         u = uBack, v = vBack, w = wBack;
         focalLength = focalLengthBack;
     }
+
+    Matrix4f getViewportMat();
+    Matrix4f getProjectionMat();
+    Matrix4f getCameraMat();
+
+    void initBuffer()
+    {
+        int size = width * height * Msaafactor * Msaafactor;
+        for (int i = 0; i < size; i++)
+        {
+            pixelBuffer[i] = Vector3f();
+            zBuffer[i] = -1;
+        }
+    }
+    void setZBuffer(int i, int j, float depth) { zBuffer[height * i + j] = depth; }
+    float getZBuffer(int i, int j) { return zBuffer[height * i + j]; }
 };

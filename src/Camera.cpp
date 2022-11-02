@@ -5,6 +5,7 @@ Camera::Camera(Vector3f position, Vector3f viewDirection, float focalLength, int
     : position(position), focalLength(focalLength), positionBack(position),
       focalLengthBack(focalLength),
       pixelBuffer(std::make_unique<Vector3f[]>(width * height * Msaafactor * Msaafactor)),
+      zBuffer(std::make_unique<float[]>(width * height * Msaafactor * Msaafactor)),
       width(width * Msaafactor), height(height * Msaafactor), r(r), t(t), Msaafactor(Msaafactor)
 {
     w = -viewDirection.normalize();
@@ -114,3 +115,56 @@ void Camera::orbit(float angle, float centerDis, int direction)
 
 void Camera::pan(float distance, int direction) { position += distance * getDirection(direction); }
 void Camera::dolly(float distance) { position += distance * (-w); }
+
+Matrix4f Camera::getViewportMat()
+{
+    float nx = width;
+    float ny = height;
+
+    auto rnt = Matrix4f();
+    rnt.row[0].x = nx / 2;
+    rnt.row[0].w = (nx - 1) / 2;
+    rnt.row[1].y = ny / 2;
+    rnt.row[1].w = (ny - 1) / 2;
+    return rnt;
+}
+
+Matrix4f Camera::getProjectionMat()
+{
+    float l = -r;
+    float b = -t;
+    float n = -focalLength;
+    float f = n * 5;
+
+    auto orthMat = Matrix4f();
+    auto P = Matrix4f();
+
+    orthMat.row[0].x = 2 / (r - l);
+    orthMat.row[0].w = -(r + l) / (r - l);
+    orthMat.row[1].y = 2 / (t - b);
+    orthMat.row[1].w = -(t + b) / (t - b);
+    orthMat.row[2].z = 2 / (n - f);
+    orthMat.row[2].w = -(n + f) / (n - f);
+
+    if (perspective)
+    {
+        P.row[0].x = n;
+        P.row[1].y = n;
+        P.row[2].z = n + f;
+        P.row[2].w = -f * n;
+        P.row[3].z = 1;
+        P.row[3].w = 0;
+    }
+    return orthMat * P;
+}
+
+Matrix4f Camera::getCameraMat()
+{
+    auto rotMat =
+        Matrix4f(u.toDirection4f(), v.toDirection4f(), w.toDirection4f(), Vector4f(0, 0, 0, 1));
+    auto transMat = Matrix4f();
+    transMat.row[0].w = -position.x;
+    transMat.row[1].w = -position.y;
+    transMat.row[2].w = -position.z;
+    return rotMat * transMat;
+}

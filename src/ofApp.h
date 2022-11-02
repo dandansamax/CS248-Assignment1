@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene.h"
+#include "BaseScene.h"
 #include "ofMain.h"
 
 class ofApp : public ofBaseApp
@@ -12,6 +12,7 @@ public:
     void draw();
 
     void keyPressed(int key);
+    /*
     void keyReleased(int key);
     void mouseMoved(int x, int y);
     void mouseDragged(int x, int y, int button);
@@ -23,12 +24,12 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-
+*/
     ofTexture texColor;
 
     int w, h;
 
     ofPixels colorPixels;
 
-    Scene scene;
+    std::unique_ptr<BaseScene> scene;
 };

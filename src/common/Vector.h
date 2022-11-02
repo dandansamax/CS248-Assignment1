@@ -238,5 +238,5 @@ inline Vector4f Vector3f::toDirection4f() const { return Vector4f(x, y, z, 0); }
 
 inline Vector3f Vector4f::getVector3f() const
 {
-    return w < eps ? Vector3f(x, y, z) : Vector3f(x / w, y / w, z / w);
+    return std::abs(w) < eps ? Vector3f(x, y, z) : Vector3f(x / w, y / w, z / w);
 }

@@ -1,30 +1,23 @@
 #pragma once
 
+#include <memory>
+#include <queue>
 #include <vector>
 
+#include "BaseObject.h"
+#include "Light.h"
 #include "Camera.h"
-#include "GeoObject.h"
-#include "Shader.h"
-#include "ofMain.h"
+#include "ofPixels.h"
 
-class Scene
+class BaseScene
 {
-private:
-    Vector3f getColorByED(const Ray &viewRay);
-
 public:
-    ofPixels *pixels;
-
-    std::vector<std::shared_ptr<GeoObject>> objects;
     std::vector<std::shared_ptr<Light>> lights;
     std::unique_ptr<Camera> ca;
-    std::unique_ptr<Shader> shader;
 
-    GeoObject *selectedObj;
+    ofPixels *pixels;
+    BaseObject *selectedObj;
     int selectLight = 0;
-
-    void render();
-    void select(int x, int y);
 
     // 0: Left, 1: Up, 2: Right, 3: Down
     void objMoveInCaSpace(float distance, int direction);
@@ -34,4 +27,6 @@ public:
 
     void switchLight();
     void moveLight(float distance, int direction);
+
+    virtual void render() = 0;
 };
