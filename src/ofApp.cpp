@@ -18,12 +18,17 @@ void ofApp::setup()
     scene = std::unique_ptr<BaseScene>(new RasterScene());
 
     auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
+    if (mesh->mesh.Vertices[0].Normal == objl::Vector3())
+    {
+        mesh->calVectexNormal();
+    }
     scene->ca =
         std::make_unique<Camera>(Vector3f(0, 0, 8), Vector3f(0, 0, -1), 4.0f, w, h, 4.0f, 3.0f, 1);
     scene->ca->perspective = true;
     scene->pixels = &colorPixels;
 
     dynamic_cast<RasterScene &>(*scene).meshes.push_back(mesh);
+    dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<NormalShader>(new NormalShader());
 
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
@@ -47,7 +52,6 @@ void ofApp::draw()
     ofSetHexColor(0xffffff);
     texColor.draw(0, 0, w, h);
 }
-
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)

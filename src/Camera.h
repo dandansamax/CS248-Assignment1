@@ -17,7 +17,11 @@ private:
     Vector3f positionBack, uBack, vBack, wBack;
     float focalLengthBack = 1.0f;
 
+    int size;
     std::unique_ptr<Vector3f[]> pixelBuffer;
+    std::unique_ptr<Vector3f[]> normalBuffer;
+    std::unique_ptr<Vector3f[]> positionBuffer;
+    std::unique_ptr<Vector3f[]> colorBuffer;
     std::unique_ptr<float[]> zBuffer;
 
 public:
@@ -58,13 +62,24 @@ public:
 
     void initBuffer()
     {
-        int size = width * height * Msaafactor * Msaafactor;
         for (int i = 0; i < size; i++)
         {
             pixelBuffer[i] = Vector3f();
+            normalBuffer[i] = Vector3f();
+            positionBuffer[i] = Vector3f();
+            colorBuffer[i] = Vector3f();
             zBuffer[i] = -1;
         }
     }
     void setZBuffer(int i, int j, float depth) { zBuffer[height * i + j] = depth; }
     float getZBuffer(int i, int j) { return zBuffer[height * i + j]; }
+
+    void setGBuffer(int i, int j, const Vector3f &normal, const Vector3f &position,
+                    const Vector3f &color)
+    {
+        normalBuffer[height * i + j] = normal;
+        positionBuffer[height * i + j] = position;
+        colorBuffer[height * i + j] = color;
+    }
+    Vector3f getNormal(int i, int j) { return normalBuffer[height * i + j]; }
 };

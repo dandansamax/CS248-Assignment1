@@ -4,8 +4,12 @@ Camera::Camera(Vector3f position, Vector3f viewDirection, float focalLength, int
                float r, float t, int Msaafactor)
     : position(position), focalLength(focalLength), positionBack(position),
       focalLengthBack(focalLength),
-      pixelBuffer(std::make_unique<Vector3f[]>(width * height * Msaafactor * Msaafactor)),
-      zBuffer(std::make_unique<float[]>(width * height * Msaafactor * Msaafactor)),
+      size(width * height * Msaafactor * Msaafactor),
+      pixelBuffer(std::make_unique<Vector3f[]>(size)),
+      normalBuffer(std::make_unique<Vector3f[]>(size)),
+      positionBuffer(std::make_unique<Vector3f[]>(size)),
+      colorBuffer(std::make_unique<Vector3f[]>(size)),
+      zBuffer(std::make_unique<float[]>(size)),
       width(width * Msaafactor), height(height * Msaafactor), r(r), t(t), Msaafactor(Msaafactor)
 {
     w = -viewDirection.normalize();
