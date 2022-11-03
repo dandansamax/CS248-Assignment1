@@ -21,7 +21,7 @@ private:
     std::unique_ptr<Vector3f[]> pixelBuffer;
     std::unique_ptr<Vector3f[]> normalBuffer;
     std::unique_ptr<Vector3f[]> positionBuffer;
-    std::unique_ptr<Vector3f[]> colorBuffer;
+    std::unique_ptr<Vector3f[]> textureBuffer;
     std::unique_ptr<float[]> zBuffer;
 
 public:
@@ -67,7 +67,7 @@ public:
             pixelBuffer[i] = Vector3f();
             normalBuffer[i] = Vector3f();
             positionBuffer[i] = Vector3f();
-            colorBuffer[i] = Vector3f();
+            textureBuffer[i] = Vector3f();
             zBuffer[i] = -1.0f;
         }
     }
@@ -79,7 +79,9 @@ public:
     {
         normalBuffer[height * i + j] = normal;
         positionBuffer[height * i + j] = position;
-        colorBuffer[height * i + j] = color;
+        textureBuffer[height * i + j] = color;
     }
     Vector3f getNormal(int i, int j) { return normalBuffer[height * i + j]; }
+    Vector3f getPosition(int i, int j) { return positionBuffer[height * i + j]; }
+    Vector3f getTexture(int i, int j) { return textureBuffer[height * i + j]; }
 };

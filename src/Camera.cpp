@@ -8,7 +8,7 @@ Camera::Camera(Vector3f position, Vector3f viewDirection, float focalLength, int
       pixelBuffer(std::make_unique<Vector3f[]>(size)),
       normalBuffer(std::make_unique<Vector3f[]>(size)),
       positionBuffer(std::make_unique<Vector3f[]>(size)),
-      colorBuffer(std::make_unique<Vector3f[]>(size)),
+      textureBuffer(std::make_unique<Vector3f[]>(size)),
       zBuffer(std::make_unique<float[]>(size)),
       width(width * Msaafactor), height(height * Msaafactor), r(r), t(t), Msaafactor(Msaafactor)
 {

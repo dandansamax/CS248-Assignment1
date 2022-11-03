@@ -28,19 +28,17 @@ public:
         return Vector3f(alpha, beta, 1.0f - alpha - beta);
     }
 
-    float getDepth(const Vector3f &p)
+    float getDepth(const Vector3f &coor)
     {
-        auto coor = getBaryCoor(p);
         return coor.x * t1.z + coor.y * t2.z + coor.z * t3.z;
     }
 
-    Vector3f getNormal(const Vector3f &p)
+    Vector3f getNormal(const Vector3f &coor)
     {
-        auto coor = getBaryCoor(p);
         return coor.x * n1 + coor.y * n2 + coor.z * n3;
     }
 
-    Vector3f getPosition(const Vector3f &p, const Vector3f &coor)
+    Vector3f getPosition(const Vector3f &coor)
     {
         return coor.x * t1 + coor.y * t2 + coor.z * t3;
     }
