@@ -24,7 +24,7 @@ void RasterScene::render()
                 }
         }
     }
-    shader->shade(ca);
+    shader->shade(ca, lights);
     ca->setOfPixels(*pixels);
 }
 
@@ -39,7 +39,7 @@ inline void RasterScene::getPosColor(Triangle &t, Triangle &originT, int x, int 
         {
             ca->setZBuffer(x, y, depth);
             ca->setGBuffer(x, y, t.getNormal(bary), originT.getPosition(bary),
-                           Vector3f(0.5f, 0.5f, 0.5f));
+                           Vector3f(0.7f, 0.7f, 0.7f));
         }
     }
 }

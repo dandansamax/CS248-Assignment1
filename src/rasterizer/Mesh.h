@@ -1,76 +1,32 @@
 #pragma once
 
-#include "OBJ_Loader.h"
 #include "Triangle.h"
 
+namespace tinyobj
+{
+    class attrib_t;
+    class shape_t;
+    class material_t;
+    class index_t;
+    bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes, std::vector<material_t> *materials,
+                 std::string *warn, std::string *err, const char *filename,
+                 const char *mtl_basedir = NULL, bool triangulate = true,
+                 bool default_vcols_fallback = true);
+}
 class Mesh : public BaseObject
 {
+private:
+    tinyobj::attrib_t *attrib;
+    tinyobj::shape_t *shape;
+
 public:
-    objl::Mesh mesh;
+    Mesh(const std::string &path, const Vector3f &center);
 
-    Mesh(objl::Mesh &&mesh, const Vector3f &center) : BaseObject(center), mesh(mesh) {}
+    int getTriangleNum();
 
-    Mesh(const std::string &path, const Vector3f &center) : BaseObject(center)
-    {
-        objl::Loader Loader;
-        bool loadout = Loader.LoadFile(path);
-        if (!loadout)
-        {
-            std::cerr << "Error on loading obj: " << path << std::endl;
-            return;
-        }
-        else
-        {
-            std::cout << "Successfully load obj: " << path << std::endl;
-        }
-        mesh = Loader.LoadedMeshes[0];
-    }
-
-    int getTriangleNum() { return mesh.Indices.size() / 3; }
-
-    Vector3f getIthVertex(int i)
-    {
-        return Vector3f(mesh.Vertices[i].Position.X, mesh.Vertices[i].Position.Y,
-                        mesh.Vertices[i].Position.Z);
-    }
-
-    Vector3f getIthNormal(int i)
-    {
-        return Vector3f(mesh.Vertices[i].Normal.X, mesh.Vertices[i].Normal.Y,
-                        mesh.Vertices[i].Normal.Z);
-    }
-
-    Triangle getIthTriangle(int i)
-    {
-        Vector3f t1 = getIthVertex(mesh.Indices[i * 3]);
-        Vector3f t2 = getIthVertex(mesh.Indices[i * 3 + 1]);
-        Vector3f t3 = getIthVertex(mesh.Indices[i * 3 + 2]);
-        Vector3f n1 = getIthNormal(mesh.Indices[i * 3]);
-        Vector3f n2 = getIthNormal(mesh.Indices[i * 3 + 1]);
-        Vector3f n3 = getIthNormal(mesh.Indices[i * 3 + 2]);
-        return Triangle(t1, t2, t3, n1, n2, n3);
-    }
-
-    void calVectexNormal()
-    {
-        for (auto &v : mesh.Vertices)
-        {
-            v.Normal = objl::Vector3();
-        }
-        for (size_t i = 0; i < mesh.Indices.size(); i += 3)
-        {
-            auto &t1 = mesh.Vertices[mesh.Indices[i]];
-            auto &t2 = mesh.Vertices[mesh.Indices[i + 1]];
-            auto &t3 = mesh.Vertices[mesh.Indices[i + 2]];
-
-            auto normal = objl::math::CrossV3(t2.Position - t1.Position, t3.Position - t1.Position);
-            t1.Normal = t1.Normal + normal;
-            t2.Normal = t2.Normal + normal;
-            t3.Normal = t3.Normal + normal;
-        }
-        for (auto &v : mesh.Vertices)
-        {
-            v.Normal = v.Normal / objl::math::MagnitudeV3(v.Normal);
-        }
-    }
+    Vector3f getIthVertex(int i);
+    Vector3f getIthNormal(int i);
+    void setIthNormal(int i, Vector3f normal);
+    Triangle getIthTriangle(int i);
+    void calVectexNormal();
 };

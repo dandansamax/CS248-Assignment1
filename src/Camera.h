@@ -9,7 +9,7 @@
 
 class Camera
 {
-private:
+public:
     Vector3f position;
     Vector3f u, v, w;
     float focalLength = 1.0f;
@@ -24,7 +24,6 @@ private:
     std::unique_ptr<Vector3f[]> textureBuffer;
     std::unique_ptr<float[]> zBuffer;
 
-public:
     bool perspective = false;
     int width, height;
     float r, t;

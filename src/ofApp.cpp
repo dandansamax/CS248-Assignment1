@@ -25,10 +25,9 @@ void ofApp::setup()
     scene->pixels = &colorPixels;
 
     dynamic_cast<RasterScene &>(*scene).meshes.push_back(mesh);
-    dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<NormalShader>(new NormalShader());
+    dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<PhongPixelShader>(new PhongPixelShader());
 
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
-    scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 3, -2), Vector3f(0.5, 0.5, 0.5)));
 }
 
 //--------------------------------------------------------------
