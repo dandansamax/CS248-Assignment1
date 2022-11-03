@@ -68,7 +68,7 @@ public:
             normalBuffer[i] = Vector3f();
             positionBuffer[i] = Vector3f();
             colorBuffer[i] = Vector3f();
-            zBuffer[i] = -1;
+            zBuffer[i] = -1.0f;
         }
     }
     void setZBuffer(int i, int j, float depth) { zBuffer[height * i + j] = depth; }

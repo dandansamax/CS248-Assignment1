@@ -18,10 +18,7 @@ void ofApp::setup()
     scene = std::unique_ptr<BaseScene>(new RasterScene());
 
     auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
-    if (mesh->mesh.Vertices[0].Normal == objl::Vector3())
-    {
-        mesh->calVectexNormal();
-    }
+    mesh->calVectexNormal();
     scene->ca =
         std::make_unique<Camera>(Vector3f(0, 0, 8), Vector3f(0, 0, -1), 4.0f, w, h, 4.0f, 3.0f, 1);
     scene->ca->perspective = true;

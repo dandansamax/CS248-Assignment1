@@ -59,9 +59,9 @@ public:
         }
         for (size_t i = 0; i < mesh.Indices.size(); i += 3)
         {
-            auto t1 = mesh.Vertices[mesh.Indices[i * 3]];
-            auto t2 = mesh.Vertices[mesh.Indices[i * 3 + 1]];
-            auto t3 = mesh.Vertices[mesh.Indices[i * 3 + 2]];
+            auto &t1 = mesh.Vertices[mesh.Indices[i]];
+            auto &t2 = mesh.Vertices[mesh.Indices[i + 1]];
+            auto &t3 = mesh.Vertices[mesh.Indices[i + 2]];
 
             auto normal = objl::math::CrossV3(t2.Position - t1.Position, t3.Position - t1.Position);
             t1.Normal = t1.Normal + normal;
@@ -70,7 +70,7 @@ public:
         }
         for (auto &v : mesh.Vertices)
         {
-            v.Normal = v.Normal / objl::math::MagnitudeV3(v.Normal); 
+            v.Normal = v.Normal / objl::math::MagnitudeV3(v.Normal);
         }
     }
 };

@@ -15,7 +15,12 @@ class NormalShader : public PixelShader
         for (int i = 0; i < ca->width; i++)
             for (int j = 0; j < ca->height; j++)
             {
-                ca->setColor(i, j, ca->getNormal(i, j));
+                if (ca->getZBuffer(i, j) != -1.0f)
+                {
+                    auto color = ca->getNormal(i, j);
+                    color = (color + Vector3f(1, 1, 1)) / 2;
+                    ca->setColor(i, j, color);
+                }
             }
     }
 };
