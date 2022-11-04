@@ -4,13 +4,18 @@ void RasterScene::render()
 {
     ca->initBuffer();
     perMat = getTransformationMat();
-    for (auto mesh : meshes)
+    for (auto &mesh : meshes)
     {
+        if (gouraud)
+        {
+            mesh->calGouraudColor(ca, lights, shader);
+        }
+
         auto objPerMat = perMat * mesh->transformMat;
         int size = mesh->getTriangleNum();
         for (int i = 0; i < size; i++)
         {
-            Triangle originT = mesh->getIthTriangle(i);
+            Triangle originT = mesh->getIthTriangle(i, gouraud);
             Triangle t = objPerMat * originT;
             auto bounding = t.getBoundingBox();
             bounding.x = std::max((int)bounding.x, 0);
@@ -24,7 +29,10 @@ void RasterScene::render()
                 }
         }
     }
-    shader->shade(ca, lights);
+    if (!gouraud)
+    {
+        pixelShade();
+    }
     ca->setOfPixels(*pixels);
 }
 
@@ -38,10 +46,33 @@ inline void RasterScene::getPosColor(Triangle &t, Triangle &originT, int x, int 
         if (depth > ca->getZBuffer(x, y) && depth > -1 && depth < 1)
         {
             ca->setZBuffer(x, y, depth);
-            ca->setGBuffer(x, y, t.getNormal(bary), originT.getPosition(bary),
-                           Vector3f(0.7f, 0.7f, 0.7f));
+            if (gouraud)
+            {
+                ca->setColor(x, y, t.getGouraudColor(bary));
+            }
+            else
+            {
+                ca->setGBuffer(x, y, t.getNormal(bary), originT.getPosition(bary),
+                               Vector3f(0.7f, 0.7f, 0.7f));
+            }
         }
     }
+}
+
+void RasterScene::pixelShade()
+{
+    for (int i = 0; i < ca->width; i++)
+        for (int j = 0; j < ca->height; j++)
+        {
+            if (ca->getZBuffer(i, j) != -1.0f)
+            {
+                auto normal = ca->getNormal(i, j);
+                auto interPos = ca->getPosition(i, j);
+                auto color = ca->getTexture(i, j);
+                auto rnt = shader->getPointColor(ca->position, interPos, normal, color, lights);
+                ca->setColor(i, j, rnt);
+            }
+        }
 }
 
 Matrix4f RasterScene::getTransformationMat()

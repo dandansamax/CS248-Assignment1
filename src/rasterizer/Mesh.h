@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Triangle.h"
 #include "BaseObject.h"
+#include "BaseShader.h"
+#include "Camera.h"
+#include "Light.h"
+#include "Triangle.h"
 #include <vector>
 
 namespace tinyobj
@@ -20,6 +23,9 @@ private:
     tinyobj::attrib_t *attrib;
     tinyobj::shape_t *shape;
 
+    bool gouraud = false;
+    std::vector<float> gouraudColor;
+
 public:
     Mesh(const std::string &path, const Vector3f &center);
     ~Mesh();
@@ -28,7 +34,16 @@ public:
 
     Vector3f getIthVertex(int i);
     Vector3f getIthNormal(int i);
-    void setIthNormal(int i, Vector3f normal);
-    Triangle getIthTriangle(int i);
+    void setIthNormal(int i, const Vector3f &normal);
+    Vector3f getIthGouraudColor(int i);
+    void setIthGouraudColor(int i, const Vector3f &color);
+    Triangle getIthTriangle(int i, bool gouraud);
+    Vector3f getIthTexture(int i);
+    void calGouraudColor(std::unique_ptr<Camera> &ca,
+                         const std::vector<std::shared_ptr<Light>> &lights,
+                         const BaseShader &shader);
     void calVectexNormal();
+    void calGouraudColor(std::unique_ptr<Camera> &ca,
+                         const std::vector<std::shared_ptr<Light>> &lights,
+                         const std::unique_ptr<BaseShader> &shader);
 };

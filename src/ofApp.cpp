@@ -20,13 +20,15 @@ void ofApp::setup()
     auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
     mesh->calVectexNormal();
     scene->ca =
-        std::make_unique<Camera>(Vector3f(0, 0, 8), Vector3f(0, 0, -1), 4.0f, w, h, 4.0f, 3.0f, 1);
+        std::make_unique<Camera>(Vector3f(0, 3.0f, 6.0f), Vector3f(0, 0, -1), 3.0f, w, h, 4.0f, 3.0f, 1);
     scene->ca->perspective = true;
     scene->pixels = &colorPixels;
 
     dynamic_cast<RasterScene &>(*scene).meshes.push_back(mesh);
-    dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<PhongPixelShader>(new PhongPixelShader());
-    // dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<NormalShader>(new NormalShader());
+    dynamic_cast<RasterScene &>(*scene).shader =
+        std::unique_ptr<PhongBaseShader>(new PhongBaseShader());
+    // dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<NormalShader>(new
+    // NormalShader());
 
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
 }
@@ -64,6 +66,11 @@ void ofApp::keyPressed(int key)
         {
             scene->ca->setPerspective();
         }
+        break;
+
+    case 'r':
+        dynamic_cast<RasterScene &>(*scene).gouraud =
+            1 - dynamic_cast<RasterScene &>(*scene).gouraud;
         break;
     /*
     case 'q':

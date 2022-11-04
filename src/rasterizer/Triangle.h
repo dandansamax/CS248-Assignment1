@@ -43,6 +43,11 @@ public:
         return coor.x * t1 + coor.y * t2 + coor.z * t3;
     }
 
+    Vector3f getGouraudColor(const Vector3f &coor)
+    {
+        return coor.x * n1 + coor.y * n2 + coor.z * n3;
+    }
+
     // x_min, x_max, y_min, y_max
     Vector4f getBoundingBox()
     {
