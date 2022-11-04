@@ -19,16 +19,14 @@ void ofApp::setup()
 
     auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
     mesh->calVectexNormal();
-    scene->ca =
-        std::make_unique<Camera>(Vector3f(0, 3.0f, 6.0f), Vector3f(0, 0, -1), 3.0f, w, h, 4.0f, 3.0f, 1);
+    scene->ca = std::make_unique<Camera>(Vector3f(0, 3.0f, 6.0f), Vector3f(0, 0, -1), 3.0f, w, h,
+                                         4.0f, 3.0f, 1);
     scene->ca->perspective = true;
     scene->pixels = &colorPixels;
 
     dynamic_cast<RasterScene &>(*scene).meshes.push_back(mesh);
     dynamic_cast<RasterScene &>(*scene).shader =
         std::unique_ptr<PhongBaseShader>(new PhongBaseShader());
-    // dynamic_cast<RasterScene &>(*scene).shader = std::unique_ptr<NormalShader>(new
-    // NormalShader());
 
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 0), Vector3f(1, 1, 1)));
 }
@@ -172,7 +170,6 @@ void ofApp::keyPressed(int key)
     }
 }
 
-/*
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key) {}
 
@@ -180,7 +177,17 @@ void ofApp::keyReleased(int key) {}
 void ofApp::mouseMoved(int x, int y) {}
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {}
+void ofApp::mouseDragged(int x, int y, int button)
+{
+    switch (button)
+    {
+    case 0:
+        scene->drag(x, y);
+        break;
+    default:
+        break;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
@@ -188,17 +195,25 @@ void ofApp::mousePressed(int x, int y, int button)
     switch (button)
     {
     case 0:
-        scene->select(x, y);
+        scene->click(x, y);
         break;
-
     default:
-        std::cout << button << " " << std::endl;
         break;
     }
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {}
+void ofApp::mouseReleased(int x, int y, int button)
+{
+    switch (button)
+    {
+    case 0:
+        scene->release(x, y);
+        break;
+    default:
+        break;
+    }
+}
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y) {}
@@ -223,8 +238,3 @@ void ofApp::windowResized(int w, int h) {}
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg) {}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo) {}
-
-*/

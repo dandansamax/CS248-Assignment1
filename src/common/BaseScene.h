@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "BaseObject.h"
-#include "Light.h"
 #include "Camera.h"
+#include "Light.h"
 #include "ofPixels.h"
 
 class BaseScene
@@ -27,6 +27,10 @@ public:
 
     void switchLight();
     void moveLight(float distance, int direction);
+
+    virtual void drag(int x, int y) {}
+    virtual void click(int x, int y) {}
+    virtual void release(int x, int y) {}
 
     virtual void render() = 0;
 };

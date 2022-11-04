@@ -11,7 +11,7 @@ void RasterScene::render()
             mesh->calGouraudColor(ca, lights, shader);
         }
 
-        auto objPerMat = perMat * mesh->transformMat;
+        auto objPerMat = perMat * current_rotation * mesh->transformMat;
         int size = mesh->getTriangleNum();
         for (int i = 0; i < size; i++)
         {
@@ -81,4 +81,27 @@ Matrix4f RasterScene::getTransformationMat()
     auto ProjMat = ca->getProjectionMat();
     auto CamMat = ca->getCameraMat();
     return VPMat * (ProjMat * CamMat);
+}
+
+inline Vector3f RasterScene::getArcballPos(int x, int y)
+{
+    float Ax = (float)x / ca->width * 2 - 1.0f;
+    float Ay = (float)y / ca->height * 2 - 1.0f;
+    if (Ax * Ax + Ay * Ay > 1.0f)
+    {
+        return Vector3f(Ax, Ay, 0.0f).normalize();
+    }
+    return Vector3f(Ax, Ay, std::sqrt(1 - Ax * Ax - Ay * Ay)).normalize();
+}
+
+void RasterScene::drag(int x, int y)
+{
+    Vector3f cur = getArcballPos(x, y);
+    current_rotation = Matrix4f::getAxisAngleRotation(dragSta, cur);
+}
+void RasterScene::click(int x, int y) { dragSta = getArcballPos(x, y); }
+void RasterScene::release(int x, int y)
+{
+    meshes[0]->transformMat = current_rotation * meshes[0]->transformMat;
+    current_rotation = Matrix4f();
 }

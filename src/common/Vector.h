@@ -212,6 +212,28 @@ public:
         return aIn * rotation * a;
     }
 
+    static Matrix4f getAxisAngleRotation(Vector3f after, Vector3f before)
+    {
+        float theta = std::acos(before.dot(after) / (before.norm() * after.norm()));
+        auto u = before.cross(after).normalize();
+        auto co = std::cos(theta);
+        auto si = std::sin(theta);
+
+        auto rnt = Matrix4f();
+        rnt.row[0].x = u.x * u.x + (1 - u.x * u.x) * co;
+        rnt.row[0].y = u.x * u.y * (1 - co) - u.z * si;
+        rnt.row[0].z = u.x * u.z * (1 - co) + u.y * si;
+
+        rnt.row[1].x = u.y * u.x * (1 - co) + u.z * si;
+        rnt.row[1].y = u.y * u.y + (1 - u.y * u.y) * co;
+        rnt.row[1].z = u.y * u.z * (1 - co) - u.x * si;
+
+        rnt.row[2].x = u.z * u.x * (1 - co) - u.y * si;
+        rnt.row[2].y = u.z * u.y * (1 - co) + u.x * si;
+        rnt.row[2].z = u.z * u.z + (1 - u.z * u.z) * co;
+        return rnt;
+    }
+
     static Matrix4f getTranslationMat(const Vector3f &move)
     {
         Matrix4f rnt = Matrix4f();

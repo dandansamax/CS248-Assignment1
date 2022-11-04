@@ -12,7 +12,6 @@ public:
     void draw();
 
     void keyPressed(int key);
-    /*
     void keyReleased(int key);
     void mouseMoved(int x, int y);
     void mouseDragged(int x, int y, int button);
@@ -22,9 +21,7 @@ public:
     void mouseExited(int x, int y);
     void mouseScrolled(ofMouseEventArgs &args);
     void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-*/
     ofTexture texColor;
 
     int w, h;
