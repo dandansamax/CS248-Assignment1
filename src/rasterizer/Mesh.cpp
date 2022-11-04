@@ -10,6 +10,9 @@ Mesh::Mesh(const std::string &path, const Vector3f &center) : BaseObject(center)
     std::vector<tinyobj::material_t> materials;
     std::string warn;
     std::string err;
+
+    attrib = new tinyobj::attrib_t();
+
     bool ret = tinyobj::LoadObj(attrib, &shapes, &materials, &warn, &err, path.c_str());
 
     if (!ret)
@@ -34,6 +37,12 @@ Mesh::Mesh(const std::string &path, const Vector3f &center) : BaseObject(center)
     shape = new tinyobj::shape_t(shapes[0]);
 }
 
+Mesh::~Mesh()
+{
+    delete attrib;
+    delete shape;
+}
+
 int Mesh::getTriangleNum() { return shape->mesh.num_face_vertices.size(); }
 
 Vector3f Mesh::getIthVertex(int i)
@@ -48,18 +57,18 @@ Vector3f Mesh::getIthVertex(int i)
 Vector3f Mesh::getIthNormal(int i)
 {
     tinyobj::index_t idx = shape->mesh.indices[i];
-    float x = attrib->vertices[3 * size_t(idx.normal_index) + 0];
-    float y = attrib->vertices[3 * size_t(idx.normal_index) + 1];
-    float z = attrib->vertices[3 * size_t(idx.normal_index) + 2];
+    float x = attrib->normals[3 * size_t(idx.vertex_index) + 0];
+    float y = attrib->normals[3 * size_t(idx.vertex_index) + 1];
+    float z = attrib->normals[3 * size_t(idx.vertex_index) + 2];
     return Vector3f(x, y, z);
 }
 
 void Mesh::setIthNormal(int i, Vector3f normal)
 {
     tinyobj::index_t idx = shape->mesh.indices[i];
-    attrib->vertices[3 * size_t(idx.normal_index) + 0] = normal.x;
-    attrib->vertices[3 * size_t(idx.normal_index) + 1] = normal.y;
-    attrib->vertices[3 * size_t(idx.normal_index) + 2] = normal.z;
+    attrib->normals[3 * size_t(idx.vertex_index) + 0] = normal.x;
+    attrib->normals[3 * size_t(idx.vertex_index) + 1] = normal.y;
+    attrib->normals[3 * size_t(idx.vertex_index) + 2] = normal.z;
 }
 
 Triangle Mesh::getIthTriangle(int i)
@@ -75,11 +84,12 @@ Triangle Mesh::getIthTriangle(int i)
 
 void Mesh::calVectexNormal()
 {
-    for (auto &v : attrib->vertices)
-    {
-        v = 0.0f;
-    }
     int size = getTriangleNum();
+    attrib->normals.resize(sizeof(float) * size * 3);
+    for (auto &n : attrib->normals)
+    {
+        n = 0.0f;
+    }
     for (int i = 0; i < size; i++)
     {
         Vector3f t1 = getIthVertex(i * 3);

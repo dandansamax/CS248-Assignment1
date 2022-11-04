@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Triangle.h"
+#include "BaseObject.h"
+#include <vector>
 
 namespace tinyobj
 {
@@ -9,9 +11,8 @@ namespace tinyobj
     class material_t;
     class index_t;
     bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes, std::vector<material_t> *materials,
-                 std::string *warn, std::string *err, const char *filename,
-                 const char *mtl_basedir = NULL, bool triangulate = true,
-                 bool default_vcols_fallback = true);
+                 std::string *warn, std::string *err, const char *filename, const char *mtl_basedir,
+                 bool triangulate, bool default_vcols_fallback);
 }
 class Mesh : public BaseObject
 {
@@ -21,6 +22,7 @@ private:
 
 public:
     Mesh(const std::string &path, const Vector3f &center);
+    ~Mesh();
 
     int getTriangleNum();
 
