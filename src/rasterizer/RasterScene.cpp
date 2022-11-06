@@ -52,7 +52,7 @@ inline void RasterScene::getPosColor(Triangle &t, Triangle &originT, int x, int 
             else
             {
                 ca->setGBuffer(x, y, t.getNormal(bary), originT.getPosition(bary),
-                               Vector3f(0.7f, 0.7f, 0.7f));
+                               meshes[0]->getTextImageColor(t.getTextureColor(bary)));
             }
         }
     }

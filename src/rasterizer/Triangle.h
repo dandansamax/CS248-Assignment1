@@ -8,10 +8,12 @@ class Triangle
 public:
     Vector3f t1, t2, t3;
     Vector3f n1, n2, n3;
+    Vector3f c1, c2, c3;
 
 public:
-    Triangle(Vector3f t1, Vector3f t2, Vector3f t3, Vector3f n1, Vector3f n2, Vector3f n3)
-        : t1(t1), t2(t2), t3(t3), n1(n1), n2(n2), n3(n3)
+    Triangle(Vector3f t1, Vector3f t2, Vector3f t3, Vector3f n1, Vector3f n2, Vector3f n3,
+             Vector3f c1, Vector3f c2, Vector3f c3)
+        : t1(t1), t2(t2), t3(t3), n1(n1), n2(n2), n3(n3), c1(c1), c2(c2), c3(c3)
     {
     }
 
@@ -28,25 +30,18 @@ public:
         return Vector3f(alpha, beta, 1.0f - alpha - beta);
     }
 
-    float getDepth(const Vector3f &coor)
-    {
-        return coor.x * t1.z + coor.y * t2.z + coor.z * t3.z;
-    }
+    float getDepth(const Vector3f &coor) { return coor.x * t1.z + coor.y * t2.z + coor.z * t3.z; }
 
-    Vector3f getNormal(const Vector3f &coor)
-    {
-        return coor.x * n1 + coor.y * n2 + coor.z * n3;
-    }
+    Vector3f getNormal(const Vector3f &coor) { return coor.x * n1 + coor.y * n2 + coor.z * n3; }
 
-    Vector3f getPosition(const Vector3f &coor)
-    {
-        return coor.x * t1 + coor.y * t2 + coor.z * t3;
-    }
+    Vector3f getPosition(const Vector3f &coor) { return coor.x * t1 + coor.y * t2 + coor.z * t3; }
 
     Vector3f getGouraudColor(const Vector3f &coor)
     {
         return coor.x * n1 + coor.y * n2 + coor.z * n3;
     }
+
+    Vector3f getTextureColor(const Vector3f &coor) { return coor.x * c1 + coor.y * c2 + coor.z * c3; }
 
     // x_min, x_max, y_min, y_max
     Vector4f getBoundingBox()
@@ -63,6 +58,6 @@ public:
         auto a = (mat * t.t1.toPoint4f()).getVector3f();
         auto b = (mat * t.t2.toPoint4f()).getVector3f();
         auto c = (mat * t.t3.toPoint4f()).getVector3f();
-        return Triangle(a, b, c, t.n1, t.n2, t.n3);
+        return Triangle(a, b, c, t.n1, t.n2, t.n3, t.c1, t.c2, t.c3);
     }
 };

@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Triangle.h"
+#include "ofImage.h"
 #include <vector>
 
 namespace tinyobj
@@ -30,6 +31,9 @@ private:
     Vector3f getTransformedNormal(const Vector3f &v);
 
 public:
+    ofImage textureImage;
+    Matrix4f textureMat;
+
     Matrix4f curRotation;
     Matrix4f curInvert;
     Vector3f dragSta;
@@ -45,7 +49,8 @@ public:
     Vector3f getIthGouraudColor(int i);
     void setIthGouraudColor(int i, const Vector3f &color);
     Triangle getIthTriangle(int i, bool gouraud);
-    Vector3f getIthTexture(int i);
+    Vector3f getTextImageColor(const Vector3f &coord);
+    Vector3f getIthTextureCoor(int i);
     void calGouraudColor(std::unique_ptr<Camera> &ca,
                          const std::vector<std::shared_ptr<Light>> &lights,
                          const BaseShader &shader);
@@ -53,4 +58,6 @@ public:
     void calGouraudColor(std::unique_ptr<Camera> &ca,
                          const std::vector<std::shared_ptr<Light>> &lights,
                          const std::unique_ptr<BaseShader> &shader);
+
+    void setTexureMapping(std::string path, const Vector3f &textureCenter);
 };

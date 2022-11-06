@@ -90,7 +90,35 @@ Vector3f Mesh::getIthGouraudColor(int i)
     return Vector3f(x, y, z);
 }
 
-Vector3f Mesh::getIthTexture(int i) { return Vector3f(0.7f, 0.7f, 0.7f); }
+inline Vector3f getSphericalCoor(const Vector3f &pos)
+{
+
+    if (pos.norm() < eps)
+    {
+        return Vector3f();
+    }
+    float x = (pi + std::atan2(pos.y, pos.x)) / (2 * pi);
+    float y = (pi - std::acos(pos.z / pos.norm())) / pi;
+    return Vector3f(x, y, 0);
+}
+
+Vector3f Mesh::getTextImageColor(const Vector3f &imageCoor)
+{
+    int x = imageCoor.x * textureImage.getWidth();
+    int y = imageCoor.y * textureImage.getHeight();
+
+    auto color = textureImage.getColor(x, y);
+    return Vector3f(color.r, color.g, color.b) / 255.0f;
+}
+
+Vector3f Mesh::getIthTextureCoor(int i)
+{
+    tinyobj::index_t idx = shape->mesh.indices[i];
+    float x = attrib->vertices[3 * size_t(idx.vertex_index) + 0];
+    float y = attrib->vertices[3 * size_t(idx.vertex_index) + 1];
+    float z = attrib->vertices[3 * size_t(idx.vertex_index) + 2];
+    return getSphericalCoor((textureMat * Vector3f(x, y, z).toPoint4f()).getVector3f());
+}
 
 Triangle Mesh::getIthTriangle(int i, bool gouraud)
 {
@@ -98,6 +126,9 @@ Triangle Mesh::getIthTriangle(int i, bool gouraud)
     Vector3f t1 = getIthVertex(i * 3);
     Vector3f t2 = getIthVertex(i * 3 + 1);
     Vector3f t3 = getIthVertex(i * 3 + 2);
+    Vector3f c1 = getIthTextureCoor(i * 3);
+    Vector3f c2 = getIthTextureCoor(i * 3 + 1);
+    Vector3f c3 = getIthTextureCoor(i * 3 + 2);
     if (gouraud)
     {
         n1 = getIthGouraudColor(i * 3);
@@ -110,7 +141,7 @@ Triangle Mesh::getIthTriangle(int i, bool gouraud)
         n2 = getIthNormal(i * 3 + 1);
         n3 = getIthNormal(i * 3 + 2);
     }
-    return Triangle(t1, t2, t3, n1, n2, n3);
+    return Triangle(t1, t2, t3, n1, n2, n3, c1, c2, c3);
 }
 
 void Mesh::calVectexNormal()
@@ -154,13 +185,35 @@ void Mesh::calGouraudColor(std::unique_ptr<Camera> &ca,
     {
         auto inter =
             Vector3f(attrib->vertices[i], attrib->vertices[i + 1], attrib->vertices[i + 2]);
-        inter = getTransformedPos(inter);
-
+        auto color = getTextImageColor(getSphericalCoor(inter));
         auto normal = Vector3f(attrib->normals[i], attrib->normals[i + 1], attrib->normals[i + 2]);
+
+        inter = getTransformedPos(inter);
         normal = getTransformedNormal(normal);
 
-        auto color = Vector3f(0.7f, 0.7f, 0.7f);
         auto rnt = shader->getPointColor(ca->position, inter, normal, color, lights);
         gouraudColor[i] = rnt.x, gouraudColor[i + 1] = rnt.y, gouraudColor[i + 2] = rnt.z;
     }
+}
+
+void Mesh::setTexureMapping(std::string path, const Vector3f &textureCenter)
+{
+    textureImage.loadImage(path);
+    // int size = attrib->vertices.size();
+    // float scale = 1.0f;
+    // for (int i = 0; i < size; i += 3)
+    // {
+    //     auto pos = Vector3f(attrib->vertices[i], attrib->vertices[i + 1], attrib->vertices[i +
+    //     2]) -
+    //                textureCenter;
+
+    //     if (pos.x > scale)
+    //         scale = pos.x;
+    //     if (pos.y > scale)
+    //         scale = pos.y;
+    //     if (pos.z > scale)
+    //         scale = pos.z;
+    // }
+    textureMat = // Matrix4f::getScaleMat(1 / scale, Vector3f(0, 0, 0)) *
+        Matrix4f::getTranslationMat(-textureCenter);
 }
