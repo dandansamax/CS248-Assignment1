@@ -45,13 +45,23 @@ Mesh::~Mesh()
 
 int Mesh::getTriangleNum() { return shape->mesh.num_face_vertices.size(); }
 
+Vector3f Mesh::getTransformedPos(const Vector3f &v)
+{
+    return (curRotation * transformMat * v.toPoint4f()).getVector3f();
+}
+Vector3f Mesh::getTransformedNormal(const Vector3f &v)
+{
+
+    return (curInvert.T() * inverseMat.T() * v.toDirection4f()).getVector3f();
+}
+
 Vector3f Mesh::getIthVertex(int i)
 {
     tinyobj::index_t idx = shape->mesh.indices[i];
     float x = attrib->vertices[3 * size_t(idx.vertex_index) + 0];
     float y = attrib->vertices[3 * size_t(idx.vertex_index) + 1];
     float z = attrib->vertices[3 * size_t(idx.vertex_index) + 2];
-    return Vector3f(x, y, z);
+    return getTransformedPos(Vector3f(x, y, z));
 }
 
 Vector3f Mesh::getIthNormal(int i)
@@ -60,7 +70,7 @@ Vector3f Mesh::getIthNormal(int i)
     float x = attrib->normals[3 * size_t(idx.vertex_index) + 0];
     float y = attrib->normals[3 * size_t(idx.vertex_index) + 1];
     float z = attrib->normals[3 * size_t(idx.vertex_index) + 2];
-    return Vector3f(x, y, z);
+    return getTransformedNormal(Vector3f(x, y, z));
 }
 
 void Mesh::setIthNormal(int i, const Vector3f &normal)
@@ -140,11 +150,15 @@ void Mesh::calGouraudColor(std::unique_ptr<Camera> &ca,
 {
     int size = attrib->vertices.size();
     gouraudColor.resize(size * sizeof(gouraudColor[0]));
-    for (int i = 0; i < size; i+=3)
+    for (int i = 0; i < size; i += 3)
     {
         auto inter =
             Vector3f(attrib->vertices[i], attrib->vertices[i + 1], attrib->vertices[i + 2]);
+        inter = getTransformedPos(inter);
+
         auto normal = Vector3f(attrib->normals[i], attrib->normals[i + 1], attrib->normals[i + 2]);
+        normal = getTransformedNormal(normal);
+
         auto color = Vector3f(0.7f, 0.7f, 0.7f);
         auto rnt = shader->getPointColor(ca->position, inter, normal, color, lights);
         gouraudColor[i] = rnt.x, gouraudColor[i + 1] = rnt.y, gouraudColor[i + 2] = rnt.z;

@@ -14,11 +14,7 @@ private:
     Matrix4f perMat;
     Matrix4f getTransformationMat();
 
-    Matrix4f current_rotation;
-    Vector3f dragSta;
-
 public:
-    RasterScene() { current_rotation = Matrix4f(); }
     bool gouraud = false;
     std::vector<std::shared_ptr<Mesh>> meshes;
     std::unique_ptr<BaseShader> shader;

@@ -3,17 +3,15 @@
 Camera::Camera(Vector3f position, Vector3f viewDirection, float focalLength, int width, int height,
                float r, float t, int Msaafactor)
     : position(position), focalLength(focalLength), positionBack(position),
-      focalLengthBack(focalLength),
-      size(width * height * Msaafactor * Msaafactor),
+      focalLengthBack(focalLength), size(width * height * Msaafactor * Msaafactor),
       pixelBuffer(std::make_unique<Vector3f[]>(size)),
       normalBuffer(std::make_unique<Vector3f[]>(size)),
       positionBuffer(std::make_unique<Vector3f[]>(size)),
-      textureBuffer(std::make_unique<Vector3f[]>(size)),
-      zBuffer(std::make_unique<float[]>(size)),
+      textureBuffer(std::make_unique<Vector3f[]>(size)), zBuffer(std::make_unique<float[]>(size)),
       width(width * Msaafactor), height(height * Msaafactor), r(r), t(t), Msaafactor(Msaafactor)
 {
     w = -viewDirection.normalize();
-    Vector3f up(0, -1, 0);
+    Vector3f up(0, 1, 0);
     u = up.cross(w).normalize();
     v = w.cross(u);
 
@@ -45,7 +43,7 @@ void Camera::setOfPixels(ofPixels &pixels) const
     {
         for (int j = 0; j < height / Msaafactor; j++)
         {
-            pixels.setColor(i, j, getOfColor(getMsaaAverageColor(i, j)));
+            pixels.setColor(i, height / Msaafactor - j - 1, getOfColor(getMsaaAverageColor(i, j)));
         }
     }
 }

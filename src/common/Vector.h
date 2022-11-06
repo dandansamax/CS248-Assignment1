@@ -212,7 +212,7 @@ public:
         return aIn * rotation * a;
     }
 
-    static Matrix4f getAxisAngleRotation(Vector3f after, Vector3f before)
+    static Matrix4f getAxisAngleRotation(Vector3f before, Vector3f after)
     {
         float theta = std::acos(before.dot(after) / (before.norm() * after.norm()));
         auto u = before.cross(after).normalize();

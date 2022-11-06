@@ -26,7 +26,14 @@ private:
     bool gouraud = false;
     std::vector<float> gouraudColor;
 
+    Vector3f getTransformedPos(const Vector3f &v);
+    Vector3f getTransformedNormal(const Vector3f &v);
+
 public:
+    Matrix4f curRotation;
+    Matrix4f curInvert;
+    Vector3f dragSta;
+
     Mesh(const std::string &path, const Vector3f &center);
     ~Mesh();
 

@@ -11,12 +11,11 @@ void RasterScene::render()
             mesh->calGouraudColor(ca, lights, shader);
         }
 
-        auto objPerMat = perMat * current_rotation * mesh->transformMat;
         int size = mesh->getTriangleNum();
         for (int i = 0; i < size; i++)
         {
             Triangle originT = mesh->getIthTriangle(i, gouraud);
-            Triangle t = objPerMat * originT;
+            Triangle t = perMat * originT;
             auto bounding = t.getBoundingBox();
             bounding.x = std::max((int)bounding.x, 0);
             bounding.y = std::min((int)bounding.y, ca->width - 1);
@@ -97,11 +96,14 @@ inline Vector3f RasterScene::getArcballPos(int x, int y)
 void RasterScene::drag(int x, int y)
 {
     Vector3f cur = getArcballPos(x, y);
-    current_rotation = Matrix4f::getAxisAngleRotation(dragSta, cur);
+    meshes[0]->curRotation = Matrix4f::getAxisAngleRotation(meshes[0]->dragSta, cur);
+    meshes[0]->curInvert = Matrix4f::getAxisAngleRotation(cur, meshes[0]->dragSta);
 }
-void RasterScene::click(int x, int y) { dragSta = getArcballPos(x, y); }
+void RasterScene::click(int x, int y) { meshes[0]->dragSta = getArcballPos(x, y); }
 void RasterScene::release(int x, int y)
 {
-    meshes[0]->transformMat = current_rotation * meshes[0]->transformMat;
-    current_rotation = Matrix4f();
+    meshes[0]->transformMat = meshes[0]->curRotation * meshes[0]->transformMat;
+    meshes[0]->inverseMat = meshes[0]->inverseMat * meshes[0]->curInvert;
+    meshes[0]->curRotation = Matrix4f();
+    meshes[0]->curInvert = Matrix4f();
 }
