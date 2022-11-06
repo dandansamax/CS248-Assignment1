@@ -17,9 +17,14 @@ void ofApp::setup()
 
     scene = std::unique_ptr<BaseScene>(new RasterScene());
 
-    auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
-    scene->ca = std::make_unique<Camera>(Vector3f(0, 0.0f, 6.0f), Vector3f(0, 0, -1), 2.0f, w, h,
+    // auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
+    // scene->ca = std::make_unique<Camera>(Vector3f(0, 0.0f, 6.0f), Vector3f(0, 0, -1), 2.0f, w, h,
+    //                                      4.0f, 3.0f, 1);
+    // scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 2), Vector3f(1, 1, 1)));
+    auto mesh = make_shared<Mesh>("mesh/KAUST_Beacon.obj", Vector3f(0.0f, 0.0f, 0.0f));
+    scene->ca = std::make_unique<Camera>(Vector3f(0, 0, 350.0f), Vector3f(0, 0, -1), 3.0f, w, h,
                                          4.0f, 3.0f, 1);
+    scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 400, 100), Vector3f(1, 1, 1)));
     mesh->calVectexNormal();
     scene->ca->perspective = true;
     scene->pixels = &colorPixels;
@@ -28,7 +33,6 @@ void ofApp::setup()
     dynamic_cast<RasterScene &>(*scene).shader =
         std::unique_ptr<PhongBaseShader>(new PhongBaseShader());
 
-    scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 2), Vector3f(1, 1, 1)));
 }
 
 //--------------------------------------------------------------

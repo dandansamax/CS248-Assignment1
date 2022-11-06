@@ -136,7 +136,7 @@ Matrix4f Camera::getProjectionMat()
     float l = -r;
     float b = -t;
     float n = -focalLength;
-    float f = n * 5;
+    float f = n * 200;
 
     auto orthMat = Matrix4f();
     auto P = Matrix4f();
