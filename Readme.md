@@ -1,4 +1,4 @@
-# CS248-Assignment 2
+# CS248-Assignment 3
 
 ## Step to run
 
@@ -7,28 +7,26 @@
 3. `make`
 4. `bin/Assignment1`
 
+## Used libraries
+
+Use [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader) only for .obj file loading.
+
 ## Optional functionality
 
-- [ ] visual controls
-- [x] camera zooming / dolly
-- [ ] dynamic scene
-- [x] modify the position of the light source
+- [x] Zooming
+- [ ] Triangle clipping
+- [x] Spherical coordinate texture mapping
+- [x] 3D marble texture
+- [ ] Procedural displacement
+- [ ] Wireframe model rendering
 
 ## Operation
-| Key                      | Operation                                                      |
-| ------------------------ | -------------------------------------------------------------- |
-| P                        | Switch between perspective and parallel projection             |
-| Q                        | To Lambertian shading                                          |
-| E                        | To Phong shading                                               |
-| A/W/D/S                  | Pan camera left/up/right/down **or** Move light along x/y axis |
-| N/M                      | Dolly camera font/back **or** Move light along z axis          |
-| Mouse wheel              | Zoom camera                                                    |
-| /                        | Switch movement target among camera and all light sources      |
-| F/T/H/G                  | Orbit camera left/up/right/down                                |
-| Left mouse click         | Select object                                                  |
-| left/up/right/down arrow | Translate selected object left/up/right/down                   |
-| J/K/L/S-J/S-K/S-L        | Rotate selected object along x/y/z axis                        |
-| +/-                      | Scale selected object bigger/smaller                           |
+| Key                    | Operation                                          |
+| ---------------------- | -------------------------------------------------- |
+| P                      | Switch between perspective and parallel projection |
+| R                      | Switch between Phong shader and Gouraud shader     |
+| Mouse wheel            | Zoom camera                                        |
+| Mouse left button drag | Arcball control                                    |
 
 ## Enviroment
 
