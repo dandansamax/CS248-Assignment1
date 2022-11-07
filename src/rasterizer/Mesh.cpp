@@ -41,6 +41,10 @@ Mesh::~Mesh()
 {
     delete attrib;
     delete shape;
+    if (marbleT != nullptr)
+    {
+        delete marbleT;
+    }
 }
 
 int Mesh::getTriangleNum() { return shape->mesh.num_face_vertices.size(); }
@@ -90,12 +94,16 @@ Vector3f Mesh::getIthGouraudColor(int i)
     return Vector3f(x, y, z);
 }
 
-inline Vector3f getSphericalCoor(const Vector3f &pos)
+inline Vector3f Mesh::getSphericalCoor(const Vector3f &pos)
 {
 
     if (pos.norm() < eps)
     {
         return Vector3f();
+    }
+    if (marbleT)
+    {
+        return pos;
     }
     float x = (pi + std::atan2(pos.y, pos.x)) / (2 * pi);
     float y = (pi - std::acos(pos.z / pos.norm())) / pi;
@@ -104,6 +112,14 @@ inline Vector3f getSphericalCoor(const Vector3f &pos)
 
 Vector3f Mesh::getTextImageColor(const Vector3f &imageCoor)
 {
+    if (marbleT)
+    {
+        return marbleT->getColor(imageCoor);
+    }
+    if (!textureImage.isAllocated())
+    {
+        return Vector3f(1, 1, 1);
+    }
     int x = imageCoor.x * textureImage.getWidth();
     int y = imageCoor.y * textureImage.getHeight();
 

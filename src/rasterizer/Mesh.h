@@ -4,6 +4,7 @@
 #include "BaseShader.h"
 #include "Camera.h"
 #include "Light.h"
+#include "MarbleTexture.h"
 #include "Triangle.h"
 #include "ofImage.h"
 #include <vector>
@@ -33,6 +34,7 @@ private:
 public:
     ofImage textureImage;
     Matrix4f textureMat;
+    MarbleTexture *marbleT;
 
     Matrix4f curRotation;
     Matrix4f curInvert;
@@ -49,6 +51,7 @@ public:
     Vector3f getIthGouraudColor(int i);
     void setIthGouraudColor(int i, const Vector3f &color);
     Triangle getIthTriangle(int i, bool gouraud);
+    inline Vector3f getSphericalCoor(const Vector3f &pos);
     Vector3f getTextImageColor(const Vector3f &coord);
     Vector3f getIthTextureCoor(int i);
     void calGouraudColor(std::unique_ptr<Camera> &ca,

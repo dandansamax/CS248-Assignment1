@@ -19,7 +19,9 @@ void ofApp::setup()
     scene = std::unique_ptr<BaseScene>(new RasterScene());
 
     auto mesh = make_shared<Mesh>("mesh/teapot.obj", Vector3f(0.0f, 0.0f, 0.0f));
-    mesh->setTexureMapping("texture/konata.jpg", Vector3f(0.217f, 1.575f, 0.0f));
+    // mesh->setTexureMapping("texture/konata.jpg", Vector3f(0.217f, 1.575f, 0.0f));
+    mesh->marbleT =
+        new MarbleTexture(0.15, 0.6, 2, 256, 8, Vector3f(1, 1, 1), Vector3f(0.5, 0.5, 0.5));
     scene->ca = std::make_unique<Camera>(Vector3f(0, 0.0f, 6.0f), Vector3f(0, 0, -1), 2.0f, w, h,
                                          4.0f, 3.0f, 1);
     scene->lights.push_back(std::make_shared<Light>(Vector3f(0, 5, 5), Vector3f(1, 1, 1)));
